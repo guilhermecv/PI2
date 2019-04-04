@@ -1,4 +1,5 @@
 #include "control.h" 
+#include "defs.h"
 
 #ifdef LCD_ON
 #include "LiquidCrystal_PCF8574.h"
@@ -21,10 +22,13 @@ Adafruit_MLX90614 mlx = Adafruit_MLX90614();
 
 float distance;
 long microsec;
-uint8_t led_clk_div;
-uint8_t clk;
-uint8_t clk_div;
+int8_t led_clk_div;
+int8_t backlight_clk_div;
+int8_t clk;
+uint8_t clk_div = 0;
 uint8_t machine_state;
+int8_t count = 0;
+
 float object_temp;
 
 void init_i2c_display();
@@ -38,6 +42,7 @@ void set_state_error();
 void reset();
 void system_run();
 
+void process();
 void get_color();
 void get_distance();
 void get_temperature();

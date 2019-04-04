@@ -24,7 +24,7 @@ void init_i2c_display()
   }
   else          //Erro na inicialização do display
   {
-    Serial.println(" FAIL!!!");
+    Serial.println(" FAIL!");
   }
 }
 
@@ -36,7 +36,7 @@ void init_ultrasonic_sensor()
 #ifdef ULTRASONIC_ON
   long microsec = ultrasonic.timing();
   distance = ultrasonic.convert(microsec, Ultrasonic::CM);
-  if (distance <= 0)
+  if (distance > 0)
   {
     lcd.print("OK");
     Serial.println(" OK!");
@@ -131,7 +131,7 @@ void init_ocr()
   lcd.print("PI 2 - 2019/1");
   lcd.setCursor(0, 1);
   lcd.print("OCR ");
-  // INCLUIR UM TESTE PARA O OCR
+  // INCLUIR UM TESTE PARA O OCR, por enquanto sinaliza falha
   error.ocr = 1;
   if (error.ocr)
   {
@@ -149,15 +149,15 @@ void init_ocr()
 
 void system_init()
 {
+  DDRB = (1 << PB5);
+  Serial.begin(USART_BAUD);
 #ifdef WATCHDOG_ON
   wdt_enable(WDTO_8S);  // Habilita o watchdog com um tempo limite de 8 segundos
 #else
   Serial.println("Alerta: WATCHDOG DESATIVADO!\n O sistema não será reiniciado em caso de erro\n");
 #endif
-
-  DDRB = (1 << PB5);
-  Serial.begin(USART_BAUD);
   Wire.begin();
+
   Serial.println("Iniciando modulos");
   init_i2c_display();
   delay(1000);
@@ -176,6 +176,10 @@ void system_init()
 #endif
   init_temperature_sensor();
   delay(1000);
+  pinMode(IR_0, INPUT);
+  pinMode(IR_1, INPUT);
+  pinMode(IR_2, INPUT);
+  pinMode(IR_3, INPUT);
 #ifdef WATCHDOG_ON
   wdt_reset();
 #endif
@@ -186,16 +190,22 @@ void system_init()
 void set_state_error()
 {
   machine_state = ERROR;
+  lcd.setBacklight(255);
 }
 
 void set_state_running()
 {
   machine_state = RUNNING;
+  lcd.setBacklight(255);
 }
 
 void set_state_iddle()
 {
   machine_state = IDDLE;
+  lcd.clear();
+  lcd.print("PI 2 - 2019/1");
+  lcd.setCursor(0, 1);
+  lcd.print("Em espera");
 }
 
 void reset()
@@ -207,7 +217,7 @@ void reset()
 
 //======= CONTROLE DOS PROCESSOS ========
 /*
-   Retorna a cor do objeto
+    Retorna a cor do objeto
 */
 void get_color()
 {
@@ -221,7 +231,7 @@ void get_color()
 }
 
 /*
-   Verifica a distancia do objeto
+    Verifica a distancia do objeto
 */
 void get_distance()
 {
@@ -249,6 +259,24 @@ void check_ir_sensors()
 
 }
 
+/*
+   Calcula o volume da garrafa
+*/
+void calculate_volume()
+{
+
+}
+
+/*
+   TESTE DE CONTROLE DOS PROCESSOS
+*/
+void process()
+{
+  if (!digitalRead(IR_3))
+  {
+    set_state_iddle(); // FINALIZADO O PROCESSO, RETORNA PARA ESPERA
+  }
+}
 
 //====== MÁQUINA DE ESTADOS =======
 void system_run()
@@ -258,19 +286,32 @@ void system_run()
     clk = 0;
     switch (machine_state)
     {
+
       case IDDLE:
+        if (backlight_clk_div++ > BACKLIGHT_CLK_DIV)
+        {
+          backlight_clk_div = 0;
+          lcd.setBacklight(0);      // DESLIGA O BACKLIGHT APÓS TEMPO CONFIGURADO
+        }
         if (led_clk_div++ > 30)
         {
           led_clk_div = 0;
           cpl_led();
         }
+        if (!digitalRead(IR_0))     // CONFERE SE A GARRAFA ESTÁ NA POSIÇÃO CERTA PARA O INICIO DO PROCESSO
+        {
+          count++;                  // ARMAZENA A QUANTIDADE DE GARRAFAS
+          set_state_running();      // SAI DO MODO DE ESPERA
+        }
         break;
+
       case RUNNING:
         if (led_clk_div++ > 10)
         {
           led_clk_div = 0;
           cpl_led();
         }
+        process();
         break;
 
       case ERROR:
@@ -291,6 +332,7 @@ void system_run()
 }
 
 void setup() {
+  pinMode(BUZZER_PIN, OUTPUT);
   buzzer_bip();
   delay(1000);
   system_init();
@@ -304,7 +346,7 @@ void setup() {
     if (error.temperature) Serial.println(">>MLX90614");
     if (error.ocr)         Serial.println(">>Leitura OCR");
     lcd.clear();
-    lcd.print("    FALHA NA    ");
+    lcd.print("    FALHA NA   ");
     lcd.setCursor(0, 1);
     lcd.print(" INICIALIZACAO ");
     buzzer_error();
@@ -322,7 +364,7 @@ void setup() {
     lcd.print("Autoteste OK");
     buzzer_init_ok();
     delay(500);
-    set_state_running();
+    set_state_iddle();
   }
   sei();
 }
@@ -349,11 +391,6 @@ ISR(TIMER2_COMPA_vect)
   if (clk_div++ > CLK_DIV_VALUE)
   {
     clk_div = 0;
-    if (clk)
-    {
-      Serial.println("Conflito de clock");
-      buzzer_error();
-    }
     clk = 1;
   }
 }

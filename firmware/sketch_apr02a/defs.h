@@ -1,0 +1,3 @@
+/*
+ *	Definições dos parâmetros aceitáveis
+ */
