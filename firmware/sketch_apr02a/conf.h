@@ -6,7 +6,7 @@
 //======= ATIVAÇÃO DOS MÓDULOS =========
 #define LCD_ON
 //#define ULTRASONIC_ON
-#define COLOR_ON
+//#define COLOR_ON
 //#define TEMPERATURE_ON
 #define BUZZER_ON
 //#define OCR_ON

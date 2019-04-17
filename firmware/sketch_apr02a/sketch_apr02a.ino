@@ -149,6 +149,9 @@ void init_ocr()
 
 void system_init()
 {
+  lcd.setBacklight(0);
+  delay(100);
+  lcd.setBacklight(255);
   DDRB = (1 << PB5);
   Serial.begin(USART_BAUD);
 #ifdef WATCHDOG_ON
