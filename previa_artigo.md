@@ -7,7 +7,7 @@ A Indústria 4.0 é considerada como a Quarta Revolução Industrial. A primeira
 
 ## 2 Concepção
 
-O fluxograma do projeto pode ser acessado [aqui](https://github.com/guilhermecv/PI2/blob/master/fluxograma_funcionamento.jpg).
+![](imagens/fluxograma_funcionamento.jpg)
 
 #### Quadro 1
 
