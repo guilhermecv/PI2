@@ -6,10 +6,11 @@ void setup() {
   debug_msg(Serial.println("PI 2 - 2019/1\n"));
   debug_msg(Serial.println("Usart... OK"));
 #endif
-  
-  DDRB |= (1 << PB5);
-  sensors_init();
 
+  DDRB |= (1 << PB5);
+  modules_init();
+  delay(1000);
+  
 #ifdef TEST_MODE
   debug_msg(Serial.print("Sistema iniciado em MODO TESTE!\n"));
 #endif
@@ -18,7 +19,7 @@ void setup() {
 
 void loop() {
 #ifdef TEST_MODE
-  control_test();
+  modules_test();
 #else
   control_run();
 #endif
