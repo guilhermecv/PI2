@@ -1,17 +1,20 @@
 /*
-  Configurações gerais do sistema
-*/
+ * PI 2 - 2019/1
+ * Configurações gerais do sistema
+ */
+
 //========== ATIVAÇÃO DOS MÓDULOS ============
 #define USART_ON
-#define ULTRASSONIC_ON
-#define COLOR_ON
+//#define ULTRASSONIC_ON
+//#define COLOR_ON
 //#define TEMPERATURE_ON
-#define DISPLAY_ON
-//#define OCR_ON
+//#define DISPLAY_ON
+//#define OCR_ON        // FALTA IMPLEMENTAR ESTE MÓDULO
+//#define WATCHDOG_ON   // AVALIAR NECESSIDADE DO WATCHDOG
 
-//========= MODO DE OPERAÇÃO =================
-#define TEST_MODE
-#define DEBUG_ON
+//=========== MODOS DE OPERAÇÃO ==============
+//#define TEST_MODE
+//#define DEBUG_ON
 
 //============= DEFINIÇÕES ===================
 #define USART_BAUD      9600
@@ -30,6 +33,18 @@
 #define TCS_S3          5
 #define TCS_OUT         6
 
+//=== CONFIGURAÇÕES DOS SENSORES DE POSIÇÃO ==
+#define IR_0            A0
+#define IR_1            A1
+#define IR_2            A2
+#define IR_3            A3
+
+#define menu_button     7
+#define BUZZER_PIN      12
+
+//================================================
+//==== CONFIGURAÇÕES DE LIMITES DE PARÂMETROS ====
+//================================================
 
 
 
