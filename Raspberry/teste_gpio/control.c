@@ -1,13 +1,30 @@
+/**
+ * Projeto Integrador 2 - 2019/1
+ * Controle dos processos de verificação
+ * Autores: Guilherme Camargo e Jessica Ribeiro
+ */
+
 #include "control.h"
 
+/**
+ * @brief Carrega os valores para a memória
+ */
 void load_file()
 {
-
+	debug_msg(printf("Carregando valores iniciais...\n"));
+	
 }
 
+/**
+ * @brief Salva as informações do sistema
+ */
 void save_file()
 {
-
+	FILE *flog;
+	flog=fopen(FILENAME, "a");
+	fprintf(flog, "%d, %d, %d", control.total, control.passed, control.failed);
+	fprintf(flog, "%d, %d, %d", control.red_color, control.green_color, control.blue_color);
+	fflush(flog);
 }
 
 void set_state_idle()
@@ -65,6 +82,7 @@ void process_failure()
 	buzzer_process_failed();
 	save_file();
 	set_state_idle();
+	debug_msg(printf("Falha na verificacao do processo!\n"));
 }
 
 void process_ok()
@@ -72,6 +90,7 @@ void process_ok()
 	control.passed++;
 	buzzer_process_passed();
 	save_file();
+	debug_msg(printf("Verificacao concluida com sucesso!\n"));
 }
 
 /**
@@ -128,7 +147,7 @@ void control_test()
 }
 
 /**
- * @brief Execução dos processos de verificação
+ * @brief Máquina de estados para controle dos processos de verificação
  */
 void control_run()
 {
@@ -234,8 +253,8 @@ void buzzer_bip()
 {
     #ifdef BUZZER_ON
     digitalWrite(BUZZER_PIN, HIGH);
-	delay(100);
-	digitalWrite(BUZZER_PIN, LOW);
+    delay(100);
+    digitalWrite(BUZZER_PIN, LOW);
     #endif
 }
 
@@ -266,6 +285,9 @@ float get_distance()
     return end/58;
 }
 
+/**
+ * @brief Confere se o volume calculado está dentro dos limites
+ */
 int check_volume()
 {
 	float vol = calculate_volume();
@@ -281,19 +303,23 @@ int check_volume()
 
 /**
  * @brief Calcula o volume da garrafa
- *		  A lógica para escolha do raio não está implementada
+ *		A lógica para escolha do raio não está implementada
  */
 float calculate_volume()
 {
-	const float PI = 3.141592;
+	const float PI = 3.141592;	// Talvez incluir a biblioteca math.h
 	float altura = OFFSET_DISTANCE_VALUE - get_distance();
-#ifdef TEST_MODE
+	#ifdef TEST_MODE
 	debug_msg(printf("\nAlt: %.2f cm", altura));
-#endif
+	#endif
 	float raio = 4.75; // Raio do cilindro inferior
 	float volume;
+	
 	// Calcula o volume da parte inferior
 	volume = PI*raio*raio*altura;
+	
+	// Em função das variações de leitura do sensor ultrassonico, podemos ter um volume negativo,
+	// então retornamos apenas os valores positivos
 	if(volume > 0)
 		return volume;
 	else
@@ -311,30 +337,45 @@ void tcs_init()
 	pinMode(TCS_OUT, INPUT);
 }
 
+/**
+ * @brief Ativa o filtro para cor vermelha
+ */
 void tcs_set_red_filter()
 {
 	digitalWrite(TCS_S2, LOW);
 	digitalWrite(TCS_S3, LOW);
 }
 
+/**
+ * @brief Ativa o filtro para cor verde
+ */
 void tcs_set_green_filter()
 {
 	digitalWrite(TCS_S2, HIGH);
 	digitalWrite(TCS_S3, HIGH);
 }
 
+/**
+ * @brief Ativa o filtro para cor azul
+ */
 void tcs_set_blue_filter()
 {
 	digitalWrite(TCS_S2, LOW);
 	digitalWrite(TCS_S3, HIGH);
 }
 
+/**
+ * @brief Desativa os filtros de cor
+ */
 void tcs_set_no_filter()
 {
 	digitalWrite(TCS_S2, HIGH);
 	digitalWrite(TCS_S3, LOW);
 }
 
+/**
+ * @brief Mede a duração de um pulso
+ */
 int pulseIn(int PIN)
 {
 	while(digitalRead(PIN) == LOW);
