@@ -285,6 +285,8 @@ int check_volume()
 int check_color_limits()
 {
 	return 1;
+	display_set_line(LINE2);
+	display_string("OK             ");
 }
 
 /**
@@ -295,7 +297,7 @@ int check_obj_temp()
 	#ifdef TEMPERATURE_ON
 	if(read_amb_temperature() <= MAX_OBJ_TEMPERATURE)
 	{
-		return 1
+		return 1;
 	}
 	else
 	{
@@ -466,13 +468,13 @@ int pulseIn(int PIN)
  */
 void get_color()
 {
-	delay(2);
+	delay(20);
 	tcs_set_red_filter();
 	control.red_color = pulseIn(TCS_OUT);
-	delay(2);
+	delay(20);
 	tcs_set_green_filter();
 	control.green_color = pulseIn(TCS_OUT);
-	delay(2);
+	delay(20);
 	tcs_set_blue_filter();
 	control.blue_color = pulseIn(TCS_OUT);
 }

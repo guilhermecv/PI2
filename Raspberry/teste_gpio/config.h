@@ -9,7 +9,7 @@
 #define LED_ON
 #define BUZZER_ON
 #define DISPLAY_ON
-//#define TEMPERATURE_ON
+#define TEMPERATURE_ON
 #define ULTRASSONIC_ON
 #define COLOR_ON
 //#define OCR_ON
@@ -17,7 +17,7 @@
 
 #define FILENAME                "log.csv"   // Nome do arquivo de log
 #define DEBUG_ON						    // Habilita o envio de mensagens no console
-//#define TEST_MODE						    // Habilitando este modo, as outras operações não serão executadas
+#define TEST_MODE						    // Habilitando este modo, as outras operações não serão executadas
 #define OFFSET_DISTANCE_VALUE	43		    // Distância medida pelo sensor com a garrafa vazia
 #define TIME_DELAY				500		    // Tempo em ms para execução do processo apos detecção do sensor
 

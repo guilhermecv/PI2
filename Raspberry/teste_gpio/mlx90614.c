@@ -5,8 +5,10 @@
  */
 void mlx_init()
 {
-	if(wiringPiSetup() == -1) exit(1);
+	if (wiringPiSetup() == -1)
+		exit(1);
 	fd = wiringPiI2CSetup(MLX_I2CADDR);
+	//fd = MLX_I2CADDR;
 }
 
 /**
@@ -45,10 +47,11 @@ float readTemp(int reg)
 int read16(int a)
 {
 	int ret;
-	wiringPiI2CWrite(fd, a);		// Envia o endereço do registrador para leitura
+	wiringPiI2CWrite(fd, a); // Envia o endereço do registrador para leitura
 
-	ret = wiringPiI2CRead(fd);		// Recebe os dados
-	ret |= wiringPiI2CRead(fd) << 8;	// Recebe os dados
+	ret = wiringPiI2CReadReg16(fd,a);		 // Recebe os dados
+	//ret = wiringPiI2CRead(fd); // Recebe os dados
+	//ret |= wiringPiI2CRead(fd) << 8; // Recebe os dados
 
 	return ret;
 }

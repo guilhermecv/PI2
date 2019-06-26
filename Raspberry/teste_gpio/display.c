@@ -123,9 +123,9 @@ void lcd_byte(int bits, int mode)
 void lcd_toggle_enable(int bits)   {
   // Toggle enable pin on LCD display
   // Valor original do delay 500us
-  delayMicroseconds(500); 
+  delayMicroseconds(100); 
   wiringPiI2CReadReg8(fd, (bits | ENABLE));
-  delayMicroseconds(500);
+  delayMicroseconds(100);
   wiringPiI2CReadReg8(fd, (bits & ~ENABLE));
-  delayMicroseconds(500);
+  delayMicroseconds(100);
 }
