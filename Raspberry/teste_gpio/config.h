@@ -3,7 +3,9 @@
  * Configurações gerais do projeto
  */ 
 
+//====================================
 //======= ATIVAÇÃO DOS MÓDULOS =======
+//====================================
 #define LED_ON
 #define BUZZER_ON
 #define DISPLAY_ON
@@ -13,15 +15,19 @@
 //#define OCR_ON
 
 
-#define DEBUG_ON						// Habilita o envio de mensagens no console
-//#define TEST_MODE						// Habilitando este modo, as outras operações não serão executadas
-#define OFFSET_DISTANCE_VALUE	43		// Distância medida pelo sensor com a garrafa vazia
-#define TIME_DELAY				500		// Tempo em ms para execução do processo apos detecção do sensor
+#define FILENAME                "log.csv"   // Nome do arquivo de log
+#define DEBUG_ON						    // Habilita o envio de mensagens no console
+//#define TEST_MODE						    // Habilitando este modo, as outras operações não serão executadas
+#define OFFSET_DISTANCE_VALUE	43		    // Distância medida pelo sensor com a garrafa vazia
+#define TIME_DELAY				500		    // Tempo em ms para execução do processo apos detecção do sensor
 
+//=====================================
 //======== LIMITES DE VALORES =========
-#define MIN_VOLUME_VALUE		1500	// Valor mínimo do volume em ml
-
-
+//=====================================
+#define MIN_VOLUME_VALUE		900	    
+#define MAX_VOLUME_VALUE        1700        
+#define MAX_OBJ_TEMPERATURE     35          // Temperatura máxima do líquido
+#define MAX_AMB_TEMPERATURE     35
 
 //======== DEFINIÇÃO DOS PINOS ========
 //						   wPi	Físico
@@ -40,7 +46,8 @@
 #define TCS_S3				13	// 21
 #define TCS_OUT				14	// 23
 
-
-//======= ENDEREÇOS I2C =====
+//====================================
+//========== ENDEREÇOS I2C ===========
+//====================================
 #define LCD_I2CADDR			0x27
 #define MLX_I2CADDR			0x5b

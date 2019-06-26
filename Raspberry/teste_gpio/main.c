@@ -77,6 +77,7 @@ int main()
 	#else
 	printf("\nSistema iniciado corretamente!");
 	printf("\n");
+	load_file();
 	set_state_idle();
 	#endif
 
@@ -84,13 +85,13 @@ int main()
 
 	while(1)
 	{
-		cpl_led();
-
 		#ifdef TEST_MODE
 		control_test();
 		#else
 		control_run();
 		#endif
+
+		delay(5);
 	}
 	return 0;
 }

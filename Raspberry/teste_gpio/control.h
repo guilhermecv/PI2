@@ -12,8 +12,6 @@
 #include "mlx90614.h"
 #endif
 
-//const char arquivo[] = "log.csv";
-
 enum states
 {
 	IDLE,
@@ -29,6 +27,7 @@ struct
 	int red_color;
 	int green_color;
 	int blue_color;
+	float volume;
 	int total;		// Total de garrafas computadas
 	int passed;		// Total de garrafas liberadas
 	int failed;		// Total de garrafas não liberadas
@@ -36,6 +35,7 @@ struct
 
 int machine_state;
 int backlight_div;
+int led_div;
 
 // Manipulação de arquivos
 void load_file();
@@ -58,10 +58,12 @@ void buzzer_process_failed();
 void buzzer_process_passed();
 void buzzer_bip();
 
+int check_obj_temp();
+
 // TALVEZ VÁ PARA OUTRO ARQUIVO
 void ultrassonic_init();
 float get_distance();
-float calculate_volume();
+void calculate_volume();
 int check_volume();
 
 void tcs_init();
@@ -71,6 +73,7 @@ void tcs_set_blue_filter();
 void tcs_set_no_filter();
 int pulseIn(int PIN);
 void get_color();
+int check_color_limits();
 
 #ifdef DEBUG_ON
 #define debug_msg(x)	x

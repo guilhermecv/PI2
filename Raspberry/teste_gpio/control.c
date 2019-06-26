@@ -22,8 +22,9 @@ void save_file()
 {
 	FILE *flog;
 	flog=fopen(FILENAME, "a");
-	fprintf(flog, "%d, %d, %d", control.total, control.passed, control.failed);
-	fprintf(flog, "%d, %d, %d", control.red_color, control.green_color, control.blue_color);
+	fprintf(flog, "%d, %d, %d,", control.total, control.passed, control.failed);
+	fprintf(flog, "%.2f,", control.volume);
+	fprintf(flog, "%d, %d, %d\n", control.red_color, control.green_color, control.blue_color);
 	fflush(flog);
 }
 
@@ -32,7 +33,7 @@ void set_state_idle()
 	machine_state = IDLE,
 	debug_msg(printf("\n>> IDLE STATE\n"));
 	display_idle_message();
-//	buzzer_bip();
+	led_div = backlight_div = 0;
 }
 
 void set_state_running()
@@ -41,8 +42,10 @@ void set_state_running()
 	debug_msg(printf("\n>> RUNNING STATE"));
 	debug_msg(printf("\n"));
 	control.total++;
-//	buzzer_bip();
 	display_backlight_on();
+	#ifdef LED_ON
+	digitalWrite(LED_PIN, HIGH);
+	#endif
 }
 
 void set_state_check_volume()
@@ -50,7 +53,8 @@ void set_state_check_volume()
 	machine_state = CHECK_VOLUME;
 	debug_msg(printf("\n>> Checking volume"));
 	debug_msg(printf("\n"));
-//	buzzer_bip();
+	display_set_line(LINE1);
+	display_string("Volume total   ");
 }
 
 void set_state_check_temperature()
@@ -58,7 +62,8 @@ void set_state_check_temperature()
 	machine_state = CHECK_TEMPERATURE;
 	debug_msg(printf("\n>> Checking temperature"));
 	debug_msg(printf("\n"));
-//	buzzer_bip();
+	display_set_line(LINE1);
+	display_string("Temperatura    ");
 }
 
 void set_state_check_color()
@@ -66,14 +71,16 @@ void set_state_check_color()
 	machine_state = CHECK_COLOR;
 	debug_msg(printf("\n>> Checking color limits"));
 	debug_msg(printf("\n"));
-//	buzzer_bip();
+	display_set_line(LINE1);
+	display_string("Cor           ");
 }
 
 void set_state_check_ocr()
 {
 	machine_state = CHECK_OCR;
 	debug_msg(printf("\n>> Checking OCR\n"));
-	buzzer_bip();
+	display_set_line(LINE1);
+	display_string("OCR           ");
 }
 
 void process_failure()
@@ -101,18 +108,18 @@ void control_test()
 	#ifdef ULTRASSONIC_ON
 	float dist = get_distance();
 	delay(10);
-    	float vol = calculate_volume();
+    calculate_volume();
 	display_set_line(LINE1);
 	display_string("Dist ");
 	display_float(dist);
 	display_string(" cm  ");
 	display_set_line(LINE2);
 	display_string("Vol: ");
-	display_float(vol);
+	display_float(control.volume);
 	display_string(" ml  ");
-	debug_msg(printf("\nDist: %.2f cm\nVol: %.2f ml", dist, vol));
+	debug_msg(printf("\nDist: %.2f cm\nVol: %.2f ml", dist, control.volume));
 	debug_msg(printf("\n"));
-        delay(500);
+    delay(500);
 	#endif
 
 	#ifdef TEMPERATURE_ON
@@ -125,7 +132,7 @@ void control_test()
 	display_set_line(LINE2);
 	display_string("Amb Temp:");
 	display_float(amb_temp);
-    	debug_msg(printf("\nObj temp: %.2f Amb Temp: %.2f\n\n", obj_temp, amb_temp));
+    debug_msg(printf("\nObj temp: %.2f Amb Temp: %.2f\n\n", obj_temp, amb_temp));
 	delay(800);
 	#endif
 
@@ -140,7 +147,7 @@ void control_test()
 	display_string(" ");
 	display_int(control.blue_color);
 	display_string("     ");
-    	debug_msg(printf("\nR:%d G:%d B:%d\n", control.red_color, control.green_color, control.blue_color));
+    debug_msg(printf("\nR:%d G:%d B:%d\n", control.red_color, control.green_color, control.blue_color));
 	debug_msg(printf("\n"));
 	delay(800);
 	#endif
@@ -154,6 +161,18 @@ void control_run()
 	switch (machine_state)
 	{
 		case IDLE:
+			if(led_div++ > 300)
+			{
+				led_div = 0;
+				cpl_led();
+			}
+
+			if(backlight_div++ > 1000)
+			{
+				backlight_div = 0;
+				display_backlight_off();
+				display_idle_message();
+			}
 			if(!digitalRead(IR_0))
 				set_state_running();
 			break;
@@ -168,7 +187,7 @@ void control_run()
 			{
 				set_state_check_temperature();
 			}
-			else	// Se o volume estiver fora do padrão, retorna para o estado inicial
+			else
 			{
 				process_failure();
 			}
@@ -180,7 +199,16 @@ void control_run()
 			{
 			   delay(TIME_DELAY);
 				// Checa temperatura
+				if(check_obj_temp())
+				{
+					set_state_check_color();
+				}
+				else
+				{
+					process_failure();
+				}
 			}
+
 			#else
 			set_state_check_color();
 			#endif
@@ -188,7 +216,15 @@ void control_run()
 
 		case CHECK_COLOR:
 			#ifdef COLOR_ON
-
+			if(!digitalRead(IR_2))
+			{
+				delay(TIME_DELAY);
+				// Confere os limites de cor
+				if(check_color_limits())
+					set_state_check_ocr();
+				else
+					process_failure();
+			}
 			#else
 			set_state_check_ocr();
 			#endif
@@ -196,9 +232,14 @@ void control_run()
 
 		case CHECK_OCR:
 			#ifdef OCR_ON
-
+			if(!digitalRead(IR_3))
+			{
+				delay(TIME_DELAY);
+				// Faz a leitura OCR
+			}
 			#else
 			set_state_idle();
+			process_ok();
 			#endif
 			break;
 
@@ -214,8 +255,54 @@ void cpl_led()
 {
 	#ifdef LED_ON
 	digitalWrite(LED_PIN, HIGH);
-	delay(10);
+	delay(50);
 	digitalWrite(LED_PIN, LOW);
+	#endif
+}
+
+/**
+ * @brief Confere se o volume calculado está dentro dos limites
+ */
+int check_volume()
+{
+	calculate_volume();
+	display_set_line(LINE2);
+	display_float(control.volume);
+	display_string(" ml     ");
+	if(control.volume >= MIN_VOLUME_VALUE)
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+/**
+ * @brief Confere se as cores estão dentro dos limites definidos
+ */
+int check_color_limits()
+{
+	return 1;
+}
+
+/**
+ * @brief Confere se a temperatura esta dentro dos limites definidos
+ */
+int check_obj_temp()
+{
+	#ifdef TEMPERATURE_ON
+	if(read_amb_temperature() <= MAX_OBJ_TEMPERATURE)
+	{
+		return 1
+	}
+	else
+	{
+		return 0;
+	}
+	#else
+	return 1;
 	#endif
 }
 
@@ -253,7 +340,7 @@ void buzzer_bip()
 {
     #ifdef BUZZER_ON
     digitalWrite(BUZZER_PIN, HIGH);
-    delay(100);
+    delay(50);
     digitalWrite(BUZZER_PIN, LOW);
     #endif
 }
@@ -286,26 +373,10 @@ float get_distance()
 }
 
 /**
- * @brief Confere se o volume calculado está dentro dos limites
- */
-int check_volume()
-{
-	float vol = calculate_volume();
-	if(vol >= MIN_VOLUME_VALUE)
-	{
-		return 1;
-	}
-	else
-	{
-		return 0;
-	}
-}
-
-/**
  * @brief Calcula o volume da garrafa
  *		A lógica para escolha do raio não está implementada
  */
-float calculate_volume()
+void calculate_volume()
 {
 	const float PI = 3.141592;	// Talvez incluir a biblioteca math.h
 	float altura = OFFSET_DISTANCE_VALUE - get_distance();
@@ -318,12 +389,17 @@ float calculate_volume()
 	// Calcula o volume da parte inferior
 	volume = PI*raio*raio*altura;
 	
-	// Em função das variações de leitura do sensor ultrassonico, podemos ter um volume negativo,
-	// então retornamos apenas os valores positivos
+	// Se o liquido estiver acima do cilindro, considera-se outra equação
+	/* if(altura >= )
+	{
+		volume+= 1050;
+
+	}*/
+
+	// Em função das variações de leitura do sensor ultrassonico, podemos ter um volume negativo
+	// quando a garrafa estiver vazia, então atualizamos apenas os valores positivos
 	if(volume > 0)
-		return volume;
-	else
-		return 0;
+		control.volume = volume;
 }
 
 #ifdef COLOR_ON
