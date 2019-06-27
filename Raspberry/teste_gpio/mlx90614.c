@@ -8,7 +8,6 @@ void mlx_init()
 	if (wiringPiSetup() == -1)
 		exit(1);
 	fd = wiringPiI2CSetup(MLX_I2CADDR);
-	//fd = MLX_I2CADDR;
 }
 
 /**
@@ -16,6 +15,7 @@ void mlx_init()
  */
 float read_amb_temperature()
 {
+	fd = wiringPiI2CSetup(MLX_I2CADDR);
 	return readTemp(MLX90614_TA);
 }
 
@@ -24,6 +24,7 @@ float read_amb_temperature()
  */
 float read_obj_temperature()
 {
+	fd = wiringPiI2CSetup(MLX_I2CADDR);
 	return readTemp(MLX90614_TOBJ1);
 }
 
@@ -43,15 +44,13 @@ float readTemp(int reg)
 
 /**
  * @brief Faz a leitura dos registradores
+ * @param a: registrador para leitura
  */
 int read16(int a)
 {
 	int ret;
-	wiringPiI2CWrite(fd, a); // Envia o endereço do registrador para leitura
-
-	ret = wiringPiI2CReadReg16(fd,a);		 // Recebe os dados
-	//ret = wiringPiI2CRead(fd); // Recebe os dados
-	//ret |= wiringPiI2CRead(fd) << 8; // Recebe os dados
-
+	wiringPiI2CWrite(fd, a); 				// Envia o endereço do registrador para leitura
+	ret = wiringPiI2CReadReg16(fd,a);		// Recebe os dados
+	
 	return ret;
 }

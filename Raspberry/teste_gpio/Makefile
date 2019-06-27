@@ -14,7 +14,7 @@ OBJS = $(SRCS:.c=.o)
 
 EXEC = pi2
 
-all: $(EXEC)
+all: clean $(EXEC)
 
 $(EXEC): $(OBJS)
 	@$(CC) -o $@ $^ $(LDFLAGS)

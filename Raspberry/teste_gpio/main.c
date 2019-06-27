@@ -14,82 +14,81 @@ int main()
 	buzzer_bip();
 	sleep(1);
 
-	#ifdef DISPLAY_ON
+#ifdef TEMPERATURE_ON
+	printf("Temperature... ON!\n");
+	mlx_init();
+#else
+	printf("Temperature... OFF!\n");
+#endif // TEMPERATURE_ON
+
+#ifdef DISPLAY_ON
 	printf("Display....... ON!\n");
 	lcd_init();
 	display_string("PI 2 - 2019/1");
 	display_set_line(LINE2);
 	display_string("Iniciando...");
-	#else
+#else
 	printf("Display....... OFF!\n");
-	#endif // DISPLAY_ON
+#endif // DISPLAY_ON
 
-	#ifdef LED_ON
+#ifdef LED_ON
 	printf("LED........... ON!\n");
 	pinMode(LED_PIN, OUTPUT);
 	digitalWrite(LED_PIN, LOW);
-	#else
+#else
 	printf("LED........... OFF!\n");
-	#endif // LED_ON
+#endif // LED_ON
 
-	#ifdef BUZZER_ON
+#ifdef BUZZER_ON
 	printf("Buzzer........ ON!\n");
-	#else
+#else
 	printf("Buzzer........ OFF!\n");
-	#endif
+#endif
 
-	#ifdef TEMPERATURE_ON
-	printf("Temperature... ON!\n");
-	mlx_init();
-	#else
-	printf("Temperature... OFF!\n");
-	#endif // TEMPERATURE_ON
-
-	#ifdef ULTRASSONIC_ON
+#ifdef ULTRASSONIC_ON
 	printf("Ultrassonic... ON!\n");
 	ultrassonic_init();
 	printf("Distancia: %.2f\n", get_distance());
-	#else
+#else
 	printf("Ultrassonic... OFF!\n");
-	#endif // ULTRASSONIC_OFF
+#endif // ULTRASSONIC_OFF
 
-	#ifdef COLOR_ON
+#ifdef COLOR_ON
 	printf("Color......... ON!\n");
 	tcs_init();
-	#else
+#else
 	printf("Color......... OFF!\n");
-	#endif // COLOR_ON
+#endif // COLOR_ON
 
-	#ifdef OCR_ON
+#ifdef OCR_ON
 	printf("OCR........... ON!\n");
-	#else
+#else
 	printf("OCR........... OFF!\n");
-	#endif // OCR_ON
+#endif // OCR_ON
 
 	pinMode(IR_0, INPUT);
 	pinMode(IR_1, INPUT);
 	pinMode(IR_2, INPUT);
 	pinMode(IR_3, INPUT);
 
-	#ifdef TEST_MODE
+#ifdef TEST_MODE
 	printf("\nSistema iniciado em MODO TESTE!!");
 	printf("\nAs operacoes de verificacao estao suspensas\nPressione <ctrl+c> para encerrar a execucao do programa\n");
-	#else
+#else
+	//load_file();
 	printf("\nSistema iniciado corretamente!");
-	printf("\n");
-	load_file();
 	set_state_idle();
-	#endif
+#endif
 
 	sleep(2);
 
-	while(1)
+	while (1)
 	{
-		#ifdef TEST_MODE
+#ifdef TEST_MODE
 		control_test();
-		#else
+#else
 		control_run();
-		#endif
+#endif
 
 		delay(5);
 	}

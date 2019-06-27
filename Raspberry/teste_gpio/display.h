@@ -36,6 +36,13 @@ void display_float(float i);
 void display_clear();
 void display_set_line(int line);
 
+// Interação com o usuário
 void display_idle_message();
+void display_volume(float vol);
+void display_temperature(float temp);
+void display_color();
+void display_update_status(int t, int p, int r);
+
+// Controle do backlight
 void display_backlight_off();
 void display_backlight_on();

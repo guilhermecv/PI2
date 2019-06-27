@@ -7,27 +7,30 @@
 //======= ATIVAÇÃO DOS MÓDULOS =======
 //====================================
 #define LED_ON
-#define BUZZER_ON
+//#define BUZZER_ON
 #define DISPLAY_ON
 #define TEMPERATURE_ON
 #define ULTRASSONIC_ON
 #define COLOR_ON
 //#define OCR_ON
 
-
 #define FILENAME                "log.csv"   // Nome do arquivo de log
 #define DEBUG_ON						    // Habilita o envio de mensagens no console
-#define TEST_MODE						    // Habilitando este modo, as outras operações não serão executadas
+//#define TEST_MODE						    // Habilitando este modo, as outras operações não serão executadas
 #define OFFSET_DISTANCE_VALUE	43		    // Distância medida pelo sensor com a garrafa vazia
 #define TIME_DELAY				500		    // Tempo em ms para execução do processo apos detecção do sensor
 
 //=====================================
 //======== LIMITES DE VALORES =========
 //=====================================
+// VOLUME
 #define MIN_VOLUME_VALUE		900	    
-#define MAX_VOLUME_VALUE        1700        
-#define MAX_OBJ_TEMPERATURE     35          // Temperatura máxima do líquido
+#define MAX_VOLUME_VALUE        1700      
+// TEMPERATURA  
+#define MAX_OBJ_TEMPERATURE     35         
 #define MAX_AMB_TEMPERATURE     35
+// COR
+
 
 //======== DEFINIÇÃO DOS PINOS ========
 //						   wPi	Físico

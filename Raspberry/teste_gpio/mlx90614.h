@@ -7,7 +7,7 @@
 // Endereços da RAM
 #define MLX90614_TA	0x26
 #define MLX90614_TOBJ1	0x27
-#define MLX90614_TOBJ2	0x8
+
 
 
 int fd;

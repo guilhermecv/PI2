@@ -11,8 +11,22 @@
  */
 void load_file()
 {
-	debug_msg(printf("Carregando valores iniciais...\n"));
-	
+	debug_msg(printf("Buscando arquivo de log...\n"));
+	FILE *flog;
+	int n;
+	flog = fopen(FILENAME, "r");
+	if(flog == NULL)
+	{
+		printf("Falha ao abrir o arquivo");
+		exit(1);
+	}
+	while(1)
+	{
+		n = fscanf(flog, "%d, %d, %d, , , , , ", &control.total, &control.passed, &control.failed);
+		if(n==EOF)
+			break;
+	}
+	fclose(flog);
 }
 
 /**
@@ -23,26 +37,31 @@ void save_file()
 	FILE *flog;
 	flog=fopen(FILENAME, "a");
 	fprintf(flog, "%d, %d, %d,", control.total, control.passed, control.failed);
-	fprintf(flog, "%.2f,", control.volume);
+	fprintf(flog, "%.2f, %.2f,", control.volume, control.obj_temp);
 	fprintf(flog, "%d, %d, %d\n", control.red_color, control.green_color, control.blue_color);
+	//fprintf(flog, "%d, %d, %d\n", control.total, control.passed, control.failed);
+	//fclose(flog);
 	fflush(flog);
 }
 
 void set_state_idle()
 {
 	machine_state = IDLE,
-	debug_msg(printf("\n>> IDLE STATE\n"));
+	debug_msg(printf("\n>> Em espera\n"));
+	led_div = display_div = 0;
+	#ifdef DISPLAY_ON
 	display_idle_message();
-	led_div = backlight_div = 0;
+	#endif	
 }
 
 void set_state_running()
 {
 	machine_state = RUNNING;
-	debug_msg(printf("\n>> RUNNING STATE"));
-	debug_msg(printf("\n"));
+	debug_msg(printf("\n>> Iniciando verificação\n"));
 	control.total++;
+	#ifdef DISPLAY_ON
 	display_backlight_on();
+	#endif
 	#ifdef LED_ON
 	digitalWrite(LED_PIN, HIGH);
 	#endif
@@ -51,36 +70,22 @@ void set_state_running()
 void set_state_check_volume()
 {
 	machine_state = CHECK_VOLUME;
-	debug_msg(printf("\n>> Checking volume"));
-	debug_msg(printf("\n"));
-	display_set_line(LINE1);
-	display_string("Volume total   ");
 }
 
 void set_state_check_temperature()
 {
 	machine_state = CHECK_TEMPERATURE;
-	debug_msg(printf("\n>> Checking temperature"));
-	debug_msg(printf("\n"));
-	display_set_line(LINE1);
-	display_string("Temperatura    ");
 }
 
 void set_state_check_color()
 {
 	machine_state = CHECK_COLOR;
-	debug_msg(printf("\n>> Checking color limits"));
-	debug_msg(printf("\n"));
-	display_set_line(LINE1);
-	display_string("Cor           ");
 }
 
 void set_state_check_ocr()
 {
 	machine_state = CHECK_OCR;
-	debug_msg(printf("\n>> Checking OCR\n"));
-	display_set_line(LINE1);
-	display_string("OCR           ");
+	debug_msg(printf("\n>> Iniciando leitura OCR\n"));
 }
 
 void process_failure()
@@ -89,7 +94,6 @@ void process_failure()
 	buzzer_process_failed();
 	save_file();
 	set_state_idle();
-	debug_msg(printf("Falha na verificacao do processo!\n"));
 }
 
 void process_ok()
@@ -109,6 +113,8 @@ void control_test()
 	float dist = get_distance();
 	delay(10);
     calculate_volume();
+	#ifdef DISPLAY_ON
+	lcd_init();
 	display_set_line(LINE1);
 	display_string("Dist ");
 	display_float(dist);
@@ -117,27 +123,32 @@ void control_test()
 	display_string("Vol: ");
 	display_float(control.volume);
 	display_string(" ml  ");
+	#endif
 	debug_msg(printf("\nDist: %.2f cm\nVol: %.2f ml", dist, control.volume));
 	debug_msg(printf("\n"));
-    delay(500);
+    delay(800);
 	#endif
 
 	#ifdef TEMPERATURE_ON
 	float amb_temp = read_amb_temperature();
 	delay(1);
 	float obj_temp = read_obj_temperature();
+	#ifdef DISPLAY_ON
+	lcd_init();
 	display_clear();
 	display_string("Obj Temp:");
 	display_float(obj_temp);
 	display_set_line(LINE2);
 	display_string("Amb Temp:");
 	display_float(amb_temp);
+	#endif
     debug_msg(printf("\nObj temp: %.2f Amb Temp: %.2f\n\n", obj_temp, amb_temp));
 	delay(800);
 	#endif
 
 	#ifdef COLOR_ON
 	get_color();
+	#ifdef DISPLAY_ON
 	display_set_line(LINE1);
 	display_string("RGB Values     ");
 	display_set_line(LINE2);
@@ -147,6 +158,7 @@ void control_test()
 	display_string(" ");
 	display_int(control.blue_color);
 	display_string("     ");
+	#endif
     debug_msg(printf("\nR:%d G:%d B:%d\n", control.red_color, control.green_color, control.blue_color));
 	debug_msg(printf("\n"));
 	delay(800);
@@ -164,15 +176,21 @@ void control_run()
 			if(led_div++ > 300)
 			{
 				led_div = 0;
-				cpl_led();
+				//cpl_led();
+				digitalWrite(LED_PIN, HIGH);
+				delay(50);
+				digitalWrite(LED_PIN, LOW);
 			}
 
-			if(backlight_div++ > 1000)
+			#ifdef DISPLAY_ON
+			if(display_div++ > 1000)
 			{
-				backlight_div = 0;
+				display_div = 0;
 				display_backlight_off();
-				display_idle_message();
+				display_update_status(control.total,control.passed,control.failed);
 			}
+			#endif
+
 			if(!digitalRead(IR_0))
 				set_state_running();
 			break;
@@ -238,8 +256,8 @@ void control_run()
 				// Faz a leitura OCR
 			}
 			#else
-			set_state_idle();
 			process_ok();
+			set_state_idle();
 			#endif
 			break;
 
@@ -266,16 +284,23 @@ void cpl_led()
 int check_volume()
 {
 	calculate_volume();
-	display_set_line(LINE2);
-	display_float(control.volume);
-	display_string(" ml     ");
+	#ifdef DISPLAY_ON
+	display_volume(control.volume);
+	#endif
+	debug_msg(printf("\n>> Calculando volume total"));
+
 	if(control.volume >= MIN_VOLUME_VALUE)
 	{
+		debug_msg(printf("\n>> OK"));
 		return 1;
+		//debug_msg(printf("\n Volume: %.2f ml -> OK", control.volume));
 	}
 	else
 	{
 		return 0;
+		delay(1);
+		debug_msg(printf("\nValor fora do permitido!"));
+		debug_msg(printf("\n"));
 	}
 }
 
@@ -284,9 +309,18 @@ int check_volume()
  */
 int check_color_limits()
 {
+	#ifdef COLOR_ON
+
+	#ifdef DISPLAY_ON
+	display_color();
+	#endif
+
 	return 1;
-	display_set_line(LINE2);
-	display_string("OK             ");
+	#else
+	return 1;
+	debug_msg(printf("\n Sensor de cor desativado"));
+	debug_msg(printf("\n"));
+	#endif
 }
 
 /**
@@ -295,13 +329,25 @@ int check_color_limits()
 int check_obj_temp()
 {
 	#ifdef TEMPERATURE_ON
-	if(read_amb_temperature() <= MAX_OBJ_TEMPERATURE)
+	mlx_init();
+	control.obj_temp = read_obj_temperature();
+
+	#ifdef DISPLAY_ON
+	display_temperature(control.obj_temp);
+	#endif
+
+	debug_msg(printf("\n>> Medindo temperatura"));
+	if(control.obj_temp <= MAX_OBJ_TEMPERATURE)
 	{
 		return 1;
+		debug_msg(printf("\n"));
+		delay(1);
+		debug_msg(printf("Temp: %.2f ºC\n", control.obj_temp));
 	}
 	else
 	{
 		return 0;
+		debug_msg(printf("Valor fora do permitido!\n"));
 	}
 	#else
 	return 1;
@@ -347,8 +393,8 @@ void buzzer_bip()
     #endif
 }
 
-// AQUI COMEÇA O CONTROLE DOS SENSORES, TALVEZ VÁ PARA OUTRO ARQUIVO
 
+// AQUI COMEÇA O CONTROLE DOS SENSORES, TALVEZ VÁ PARA OUTRO ARQUIVO
 void ultrassonic_init()
 {
 	pinMode(ECHO_PIN, INPUT);
@@ -395,7 +441,7 @@ void calculate_volume()
 	/* if(altura >= )
 	{
 		volume+= 1050;
-
+		// Incluir aqui a outra equação
 	}*/
 
 	// Em função das variações de leitura do sensor ultrassonico, podemos ter um volume negativo

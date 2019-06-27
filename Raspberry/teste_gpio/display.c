@@ -78,6 +78,9 @@ void display_set_line(int line)
  */
 void display_string(const char *s)
 {
+  // Incluido para teste
+  //fd = wiringPiI2CSetup(LCD_I2CADDR);
+
 	while ( *s ) lcd_byte(*(s++), LCD_CHR);
 }
 
@@ -98,6 +101,49 @@ void display_idle_message()
 	display_string("PI2 - 2019/1    ");
 	display_set_line(LINE2);
 	display_string("Em espera...    ");
+}
+
+void display_volume(float vol)
+{
+  display_set_line(LINE1);
+	display_string("Volume      ");
+	display_set_line(LINE2);
+	display_float(vol);
+	display_string(" ml     ");
+}
+
+void display_temperature(float temp)
+{
+  lcd_init();
+  display_set_line(LINE1);
+	display_string("Temperatura    ");
+	display_set_line(LINE2);
+	display_float(temp);
+	display_string(" *C         ");
+}
+
+void display_color()
+{
+  display_clear();
+  display_string("Conferindo cor");
+}
+
+void display_update_status(int t, int p, int r)
+{
+  display_set_line(LINE1);
+  display_string("PI2 - Status    ");
+  display_set_line(LINE2);
+  display_char('T');
+  display_char(':');
+  display_int(t);
+  display_char(' ');
+  display_char('P');
+  display_char(':');
+  display_int(p);
+  display_char(' ');
+  display_char('R');
+  display_char(':');
+  display_int(r);
 }
 
 void lcd_byte(int bits, int mode)   

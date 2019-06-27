@@ -22,19 +22,20 @@ enum states
 	CHECK_OCR,
 }states;
 
-struct 
+struct control
 {
 	int red_color;
 	int green_color;
 	int blue_color;
 	float volume;
+	float obj_temp;
 	int total;		// Total de garrafas computadas
 	int passed;		// Total de garrafas liberadas
 	int failed;		// Total de garrafas não liberadas
 }control;
 
 int machine_state;
-int backlight_div;
+int display_div;
 int led_div;
 
 // Manipulação de arquivos
