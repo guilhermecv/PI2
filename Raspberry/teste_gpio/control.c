@@ -23,7 +23,8 @@ void load_file()
 	while(1)
 	{
 		n = fscanf(flog, "%d, %d, %d, , , , , ", &control.total, &control.passed, &control.failed);
-		if(n==EOF)
+		control.total = control.passed + control.failed;
+		if(n=='\0')
 			break;
 	}
 	fclose(flog);
@@ -35,7 +36,7 @@ void load_file()
 void save_file()
 {
 	FILE *flog;
-	flog=fopen(FILENAME, "a");
+	flog=fopen(FILENAME, "w");
 	fprintf(flog, "%d, %d, %d,", control.total, control.passed, control.failed);
 	fprintf(flog, "%.2f, %.2f,", control.volume, control.obj_temp);
 	fprintf(flog, "%d, %d, %d\n", control.red_color, control.green_color, control.blue_color);
@@ -173,14 +174,19 @@ void control_run()
 	switch (machine_state)
 	{
 		case IDLE:
+			buzzer_alive();
+			#ifdef LED_ON
 			if(led_div++ > 300)
 			{
-				led_div = 0;
-				//cpl_led();
+				//led_div = 0;
 				digitalWrite(LED_PIN, HIGH);
-				delay(50);
+			}
+			if(led_div++ > 600)
+			{
+				led_div = 0;
 				digitalWrite(LED_PIN, LOW);
 			}
+			#endif
 
 			#ifdef DISPLAY_ON
 			if(display_div++ > 1000)
@@ -226,7 +232,6 @@ void control_run()
 					process_failure();
 				}
 			}
-
 			#else
 			set_state_check_color();
 			#endif
@@ -253,7 +258,6 @@ void control_run()
 			if(!digitalRead(IR_3))
 			{
 				delay(TIME_DELAY);
-				// Faz a leitura OCR
 			}
 			#else
 			process_ok();
@@ -264,18 +268,6 @@ void control_run()
 		default:
 			break;
 	}
-}
-
-/**
- * @brief Pisca o LED
- */
-void cpl_led()
-{
-	#ifdef LED_ON
-	digitalWrite(LED_PIN, HIGH);
-	delay(50);
-	digitalWrite(LED_PIN, LOW);
-	#endif
 }
 
 /**
@@ -452,76 +444,28 @@ void calculate_volume()
 
 #ifdef COLOR_ON
 /**
- * @brief Inicializa os pinos do sensor de cor
- */
-void tcs_init()
-{
-	pinMode(TCS_S2, OUTPUT);
-	pinMode(TCS_S3, OUTPUT);
-	pinMode(TCS_OUT, INPUT);
-}
-
-/**
- * @brief Ativa o filtro para cor vermelha
- */
-void tcs_set_red_filter()
-{
-	digitalWrite(TCS_S2, LOW);
-	digitalWrite(TCS_S3, LOW);
-}
-
-/**
- * @brief Ativa o filtro para cor verde
- */
-void tcs_set_green_filter()
-{
-	digitalWrite(TCS_S2, HIGH);
-	digitalWrite(TCS_S3, HIGH);
-}
-
-/**
- * @brief Ativa o filtro para cor azul
- */
-void tcs_set_blue_filter()
-{
-	digitalWrite(TCS_S2, LOW);
-	digitalWrite(TCS_S3, HIGH);
-}
-
-/**
- * @brief Desativa os filtros de cor
- */
-void tcs_set_no_filter()
-{
-	digitalWrite(TCS_S2, HIGH);
-	digitalWrite(TCS_S3, LOW);
-}
-
-/**
- * @brief Mede a duração de um pulso
- */
-int pulseIn(int PIN)
-{
-	while(digitalRead(PIN) == LOW);
-	long start = micros();
-	while(digitalRead(PIN) == HIGH);
-	long end = micros() - start;
-	return end;
-}
-
-/**
  * @brief Atualiza as cores detectadas pelo sensor.
  */
 void get_color()
 {
 	delay(20);
-	tcs_set_red_filter();
-	control.red_color = pulseIn(TCS_OUT);
+	control.red_color = get_red_color();
 	delay(20);
-	tcs_set_green_filter();
-	control.green_color = pulseIn(TCS_OUT);
+	control.green_color = get_green_color();
 	delay(20);
-	tcs_set_blue_filter();
-	control.blue_color = pulseIn(TCS_OUT);
+	control.blue_color = get_blue_color();
 }
 #endif
+
+void buzzer_alive()
+{
+	if(buzzer_div++ > 2050)
+	{
+		digitalWrite(BUZZER_PIN, HIGH);
+	}
+	if(buzzer_div++ > 2060)
+	{
+		buzzer_div = 0;
+		digitalWrite(BUZZER_PIN, LOW);
+	}
+}

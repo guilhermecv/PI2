@@ -12,6 +12,9 @@
 #include "mlx90614.h"
 #endif
 
+#ifdef COLOR_ON
+#include "tcs3200.h"
+#endif
 enum states
 {
 	IDLE,
@@ -37,6 +40,7 @@ struct control
 int machine_state;
 int display_div;
 int led_div;
+int buzzer_div;
 
 // Manipulação de arquivos
 void load_file();
@@ -52,14 +56,15 @@ void set_state_check_ocr();
 
 void control_test();
 void control_run();
-void cpl_led();
 
 // Controle do buzzer
 void buzzer_process_failed();
 void buzzer_process_passed();
 void buzzer_bip();
 
+// Checagem dos parametros
 int check_obj_temp();
+int check_color_limits();
 
 // TALVEZ VÁ PARA OUTRO ARQUIVO
 void ultrassonic_init();
@@ -67,17 +72,13 @@ float get_distance();
 void calculate_volume();
 int check_volume();
 
-void tcs_init();
-void tcs_set_red_filter();
-void tcs_set_green_filter();
-void tcs_set_blue_filter();
-void tcs_set_no_filter();
-int pulseIn(int PIN);
 void get_color();
-int check_color_limits();
+
 
 #ifdef DEBUG_ON
 #define debug_msg(x)	x
 #else
 #define debug_msg(x)
 #endif
+
+void buzzer_alive();

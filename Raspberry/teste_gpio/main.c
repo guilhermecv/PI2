@@ -12,7 +12,6 @@ int main()
 	wiringPiSetup();
 	pinMode(BUZZER_PIN, OUTPUT);
 	buzzer_bip();
-	sleep(1);
 
 #ifdef TEMPERATURE_ON
 	printf("Temperature... ON!\n");
@@ -39,6 +38,7 @@ int main()
 	printf("LED........... OFF!\n");
 #endif // LED_ON
 
+	sleep(1);
 #ifdef BUZZER_ON
 	printf("Buzzer........ ON!\n");
 #else
@@ -75,12 +75,11 @@ int main()
 	printf("\nSistema iniciado em MODO TESTE!!");
 	printf("\nAs operacoes de verificacao estao suspensas\nPressione <ctrl+c> para encerrar a execucao do programa\n");
 #else
-	//load_file();
+	load_file();
 	printf("\nSistema iniciado corretamente!");
+	sleep(2);
 	set_state_idle();
 #endif
-
-	sleep(2);
 
 	while (1)
 	{

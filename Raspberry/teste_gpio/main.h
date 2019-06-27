@@ -26,6 +26,7 @@
 	
 #ifdef COLOR_ON
 #pragma message "COLOR... ON!"
+#include "tcs3200.h"
 #else
 #pragma message "COLOR... OFF!"
 #endif // COLOR_ON

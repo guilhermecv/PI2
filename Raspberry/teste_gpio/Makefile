@@ -3,7 +3,6 @@
 # Guilherme Camargo e Jessica Ribeiro
 
 CC = gcc
-
 CFLAGS = -Wall
 
 # Incluir aqui as bibliotecas utilizadas

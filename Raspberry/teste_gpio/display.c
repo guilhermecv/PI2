@@ -98,7 +98,7 @@ void display_char(char val)
 void display_idle_message()
 {
 	display_set_line(LINE1);
-	display_string("PI2 - 2019/1    ");
+	display_string("PI 2 - 2019/1    ");
 	display_set_line(LINE2);
 	display_string("Em espera...    ");
 }
@@ -131,7 +131,7 @@ void display_color()
 void display_update_status(int t, int p, int r)
 {
   display_set_line(LINE1);
-  display_string("PI2 - Status    ");
+  display_string("PI 2 - Status    ");
   display_set_line(LINE2);
   display_char('T');
   display_char(':');
