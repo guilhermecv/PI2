@@ -38,6 +38,7 @@ void display_set_line(int line);
 
 // Interação com o usuário
 void display_idle_message();
+void display_load_message();
 void display_volume(float vol);
 void display_temperature(float temp);
 void display_color();

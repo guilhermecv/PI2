@@ -61,16 +61,18 @@ void control_run();
 void buzzer_process_failed();
 void buzzer_process_passed();
 void buzzer_bip();
+void buzzer_alive();
+void buzzer_ir_detected();
 
 // Checagem dos parametros
 int check_obj_temp();
 int check_color_limits();
+int check_volume();
 
 // TALVEZ VÁ PARA OUTRO ARQUIVO
 void ultrassonic_init();
 float get_distance();
 void calculate_volume();
-int check_volume();
 
 void get_color();
 
@@ -80,5 +82,3 @@ void get_color();
 #else
 #define debug_msg(x)
 #endif
-
-void buzzer_alive();

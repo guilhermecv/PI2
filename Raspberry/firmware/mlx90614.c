@@ -45,12 +45,12 @@ float readTemp(int reg)
 /**
  * @brief Faz a leitura dos registradores
  * @param a: registrador para leitura
+ * @return : valor armazenado no registrador
  */
 int read16(int a)
 {
 	int ret;
 	wiringPiI2CWrite(fd, a); 				// Envia o endereço do registrador para leitura
 	ret = wiringPiI2CReadReg16(fd,a);		// Recebe os dados
-	
 	return ret;
 }

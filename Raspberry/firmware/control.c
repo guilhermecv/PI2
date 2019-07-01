@@ -12,6 +12,9 @@
 void load_file()
 {
 	debug_msg(printf("Buscando arquivo de log...\n"));
+	#ifdef DISPLAY_ON
+	display_load_message();
+	#endif
 	FILE *flog;
 	int n;
 	flog = fopen(FILENAME, "r");
@@ -198,6 +201,9 @@ void control_run()
 			#endif
 
 			if(!digitalRead(IR_0))
+				#ifdef BUZZER_IR_ON
+				buzzer_ir_detected();
+				#endif
 				set_state_running();
 			break;
 
@@ -221,6 +227,9 @@ void control_run()
 			#ifdef TEMPERATURE_ON
 			if(!digitalRead(IR_1))
 			{
+				#ifdef BUZZER_IR_ON
+				buzzer_ir_detected();
+				#endif
 			   delay(TIME_DELAY);
 				// Checa temperatura
 				if(check_obj_temp())
@@ -241,6 +250,9 @@ void control_run()
 			#ifdef COLOR_ON
 			if(!digitalRead(IR_2))
 			{
+				#ifdef BUZZER_IR_ON
+				buzzer_ir_detected();
+				#endif
 				delay(TIME_DELAY);
 				// Confere os limites de cor
 				if(check_color_limits())
@@ -257,6 +269,9 @@ void control_run()
 			#ifdef OCR_ON
 			if(!digitalRead(IR_3))
 			{
+				#ifdef BUZZER_IR_ON
+				buzzer_ir_detected();
+				#endif
 				delay(TIME_DELAY);
 			}
 			#else
@@ -385,6 +400,14 @@ void buzzer_bip()
     #endif
 }
 
+void buzzer_ir_detected()
+{
+	#ifdef BUZZER_ON
+	buzzer_bip();
+	delay(50);
+	buzzer_bip();
+	#endif
+}
 
 // AQUI COMEÇA O CONTROLE DOS SENSORES, TALVEZ VÁ PARA OUTRO ARQUIVO
 void ultrassonic_init()
@@ -459,6 +482,8 @@ void get_color()
 
 void buzzer_alive()
 {
+	#ifdef BUZZER_SIGNAL_ON
+	#ifdef BUZZER_ON
 	if(buzzer_div++ > 2050)
 	{
 		digitalWrite(BUZZER_PIN, HIGH);
@@ -468,4 +493,6 @@ void buzzer_alive()
 		buzzer_div = 0;
 		digitalWrite(BUZZER_PIN, LOW);
 	}
+	#endif
+	#endif
 }

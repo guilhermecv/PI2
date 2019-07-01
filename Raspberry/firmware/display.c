@@ -103,6 +103,15 @@ void display_idle_message()
 	display_string("Em espera...    ");
 }
 
+void display_load_message()
+{
+  display_set_line(LINE1);
+	display_string("PI 2 - 2019/1    ");
+	display_set_line(LINE2);
+	display_string("Buscando log... ");
+  delay(1000);
+}
+
 void display_volume(float vol)
 {
   display_set_line(LINE1);

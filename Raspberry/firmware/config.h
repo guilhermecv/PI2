@@ -7,7 +7,6 @@
 //======= ATIVAÇÃO DOS MÓDULOS =======
 //====================================
 #define LED_ON
-#define BUZZER_ON
 #define DISPLAY_ON
 #define TEMPERATURE_ON
 #define ULTRASSONIC_ON
@@ -19,6 +18,11 @@
 #define TEST_MODE						    // Habilitando este modo, as outras operações não serão executadas
 #define OFFSET_DISTANCE_VALUE	43		    // Distância medida pelo sensor com a garrafa vazia
 #define TIME_DELAY				500		    // Tempo em ms para execução do processo apos detecção do sensor
+
+// Configurações do Buzzer
+#define BUZZER_ON
+#define BUZZER_SIGNAL_ON					// Bips regulares se tudo estiver OK
+#define BUZZER_IR_ON						// Bips quando algum sensor for acionado
 
 //=====================================
 //======== LIMITES DE VALORES =========
@@ -39,7 +43,7 @@
 
 //======== DEFINIÇÃO DOS PINOS ========
 //						   wPi	Físico
-#define LED_PIN				6	// 22
+#define LED_PIN					// 11
 #define BUZZER_PIN			7	// 7
 
 #define IR_0				5	// 18

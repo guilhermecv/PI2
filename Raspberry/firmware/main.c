@@ -13,6 +13,14 @@ int main()
 	pinMode(BUZZER_PIN, OUTPUT);
 	buzzer_bip();
 
+#ifdef LED_ON
+	printf("LED........... ON!\n");
+	pinMode(LED_PIN, OUTPUT);
+	digitalWrite(LED_PIN, HIGH);
+#else
+	printf("LED........... OFF!\n");
+#endif // LED_ON
+
 #ifdef TEMPERATURE_ON
 	printf("Temperature... ON!\n");
 	mlx_init();
@@ -29,14 +37,6 @@ int main()
 #else
 	printf("Display....... OFF!\n");
 #endif // DISPLAY_ON
-
-#ifdef LED_ON
-	printf("LED........... ON!\n");
-	pinMode(LED_PIN, OUTPUT);
-	digitalWrite(LED_PIN, LOW);
-#else
-	printf("LED........... OFF!\n");
-#endif // LED_ON
 
 	sleep(1);
 #ifdef BUZZER_ON
