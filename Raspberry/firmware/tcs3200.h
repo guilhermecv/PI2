@@ -7,8 +7,8 @@ void tcs_set_green_filter();
 void tcs_set_blue_filter();
 void tcs_set_no_filter();
 
-int pulsein(int PIN);
-int pulseIn(int pin, int level, int timeout);
+int pulseIn(int PIN);
+//int pulseIn(int pin, int level, int timeout);
 
 int get_red_color();
 int get_green_color();

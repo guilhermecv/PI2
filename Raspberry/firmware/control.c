@@ -201,10 +201,12 @@ void control_run()
 			#endif
 
 			if(!digitalRead(IR_0))
+			{
 				#ifdef BUZZER_IR_ON
 				buzzer_ir_detected();
 				#endif
 				set_state_running();
+			}
 			break;
 
 		case RUNNING:
@@ -361,7 +363,36 @@ int check_obj_temp()
 	#endif
 }
 
-void buzzer_process_passed()
+/**
+ * @brief Implementa a leitura OCR
+ */
+void check_ocr()
+{
+	// Envia comando para salvar imagem
+
+	// Faz a leitura com o tesseract
+	system("tesseract rotulo.jpg output");
+	// Este processo é bem demorado...
+	//delay(30000);
+	// aqui buscamos a palavra suco de uva
+
+}
+void buzzeoid buzzer_alive()
+{
+	#ifdef BUZZER_SIGNAL_ON
+	#ifdef BUZZER_ON
+	if(buzzer_div++ > 2050)
+	{
+		digitalWrite(BUZZER_PIN, HIGH);
+	}
+	if(buzzer_div++ > 2060)
+	{
+		buzzer_div = 0;
+		digitalWrite(BUZZER_PIN, LOW);
+	}
+	#endif
+	#endif
+}r_process_passed()
 {
 	#ifdef BUZZER_ON
 	digitalWrite(BUZZER_PIN, HIGH);
@@ -406,6 +437,23 @@ void buzzer_ir_detected()
 	buzzer_bip();
 	delay(50);
 	buzzer_bip();
+	#endif
+}
+
+void buzzer_alive()
+{
+	#ifdef BUZZER_SIGNAL_ON
+	#ifdef BUZZER_ON
+	if(buzzer_div++ > 2050)
+	{
+		digitalWrite(BUZZER_PIN, HIGH);
+	}
+	if(buzzer_div++ > 2060)
+	{
+		buzzer_div = 0;
+		digitalWrite(BUZZER_PIN, LOW);
+	}
+	#endif
 	#endif
 }
 
@@ -479,20 +527,3 @@ void get_color()
 	control.blue_color = get_blue_color();
 }
 #endif
-
-void buzzer_alive()
-{
-	#ifdef BUZZER_SIGNAL_ON
-	#ifdef BUZZER_ON
-	if(buzzer_div++ > 2050)
-	{
-		digitalWrite(BUZZER_PIN, HIGH);
-	}
-	if(buzzer_div++ > 2060)
-	{
-		buzzer_div = 0;
-		digitalWrite(BUZZER_PIN, LOW);
-	}
-	#endif
-	#endif
-}

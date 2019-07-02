@@ -6,7 +6,7 @@
 //====================================
 //======= ATIVAÇÃO DOS MÓDULOS =======
 //====================================
-#define LED_ON
+//#define LED_ON
 #define DISPLAY_ON
 #define TEMPERATURE_ON
 #define ULTRASSONIC_ON

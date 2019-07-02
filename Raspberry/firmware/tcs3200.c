@@ -49,7 +49,7 @@ void tcs_set_no_filter()
 /**
  * @brief Mede a duração de um pulso
  */
-int pulsein(int PIN)
+int pulseIn(int PIN)
 {
 	while(digitalRead(PIN) == LOW);
 	long start = micros();
@@ -57,7 +57,7 @@ int pulsein(int PIN)
 	long end = micros() - start;
 	return end;
 }
-
+/*
 int pulseIn(int pin, int level, int timeout)
 {
    struct timeval tn, t0, t1;
@@ -95,21 +95,21 @@ int pulseIn(int pin, int level, int timeout)
 
    return micros;
 }
-
+*/
 int get_red_color()
 {
     tcs_set_red_filter();
-    return pulseIn(TCS_OUT, 1, 1000);
+    return pulseIn(TCS_OUT);
 }
 
 int get_green_color()
 {
     tcs_set_green_filter();
-    return pulseIn(TCS_OUT, 1, 1000);
+    return pulseIn(TCS_OUT);
 }
 
 int get_blue_color()
 {
     tcs_set_blue_filter();
-    return pulseIn(TCS_OUT, 1, 1000);
+    return pulseIn(TCS_OUT);
 }
