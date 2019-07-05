@@ -6,34 +6,35 @@
 //====================================
 //======= ATIVAÇÃO DOS MÓDULOS =======
 //====================================
-//#define LED_ON
+#define LED_ON
 #define DISPLAY_ON
-#define TEMPERATURE_ON
-#define ULTRASSONIC_ON
-#define COLOR_ON
-//#define OCR_ON
+//#define TEMPERATURE_ON
+//#define ULTRASSONIC_ON
+//#define COLOR_ON
+#define OCR_ON
+
 
 #define FILENAME                "log.csv"   // Nome do arquivo de log
 #define DEBUG_ON						    // Habilita o envio de mensagens no console
-#define TEST_MODE						    // Habilitando este modo, as outras operações não serão executadas
+//#define TEST_MODE						    // Habilitando este modo, as outras operações não serão executadas
 #define OFFSET_DISTANCE_VALUE	43		    // Distância medida pelo sensor com a garrafa vazia
-#define TIME_DELAY				500		    // Tempo em ms para execução do processo apos detecção do sensor
+#define DELAY					5
 
 // Configurações do Buzzer
-#define BUZZER_ON
-#define BUZZER_SIGNAL_ON					// Bips regulares se tudo estiver OK
+//#define BUZZER_ON
+//#define BUZZER_SIGNAL_ON					// Bips regulares se tudo estiver OK
 #define BUZZER_IR_ON						// Bips quando algum sensor for acionado
 
 //=====================================
 //======== LIMITES DE VALORES =========
 //=====================================
-// VOLUME
+//>> VOLUME
 #define MIN_VOLUME_VALUE		900	    
 #define MAX_VOLUME_VALUE        1700      
-// TEMPERATURA  
-#define MAX_OBJ_TEMPERATURE     35         
-#define MAX_AMB_TEMPERATURE     35
-// COR 
+//>> TEMPERATURA  
+#define MAX_OBJ_TEMPERATURE     30         
+#define MAX_AMB_TEMPERATURE     30
+//>> COR 
 /*
 #define MAX_RED_VALUE
 #define MAX_GREEN_VALUE
@@ -43,16 +44,16 @@
 
 //======== DEFINIÇÃO DOS PINOS ========
 //						   wPi	Físico
-#define LED_PIN					// 11
+#define LED_PIN				11	// 11
 #define BUZZER_PIN			7	// 7
 
-#define IR_0				5	// 18
-#define IR_1				4	// 16
-#define IR_2				1	// 12
+#define IR_0				1	// 18
+#define IR_1				5	// 16
+#define IR_2				4	// 12
 #define IR_3				16	// 10
 
-#define ECHO_PIN			10  // 24
-#define TRIGGER_PIN			11  // 26
+#define ECHO_PIN			6  // 24
+#define TRIGGER_PIN			10  // 26
 
 #define TCS_S2				12	// 19
 #define TCS_S3				13	// 21

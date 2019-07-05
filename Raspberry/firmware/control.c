@@ -20,7 +20,13 @@ void load_file()
 	flog = fopen(FILENAME, "r");
 	if(flog == NULL)
 	{
-		printf("Falha ao abrir o arquivo");
+		printf("Erro ao abrir o arquivo");
+		#ifdef DISPLAY_ON
+		display_clear();
+		display_string("   Falha na    ");
+		display_set_line(LINE2);
+		display_string(" Inicializacao ");
+		#endif
 		exit(1);
 	}
 	while(1)
@@ -43,7 +49,6 @@ void save_file()
 	fprintf(flog, "%d, %d, %d,", control.total, control.passed, control.failed);
 	fprintf(flog, "%.2f, %.2f,", control.volume, control.obj_temp);
 	fprintf(flog, "%d, %d, %d\n", control.red_color, control.green_color, control.blue_color);
-	//fprintf(flog, "%d, %d, %d\n", control.total, control.passed, control.failed);
 	//fclose(flog);
 	fflush(flog);
 }
@@ -106,6 +111,7 @@ void process_ok()
 	buzzer_process_passed();
 	save_file();
 	debug_msg(printf("Verificacao concluida com sucesso!\n"));
+	set_state_idle();
 }
 
 /**
@@ -169,6 +175,22 @@ void control_test()
 	#endif
 }
 
+void process_delay()
+{
+	int i;
+	for(i=0;i<DELAY;i++)
+	{
+		delay(500);
+		digitalWrite(LED_PIN, HIGH);
+		delay(100);
+		digitalWrite(LED_PIN, LOW);
+		#ifdef BUZZER_ON
+		//buzzer_bip();
+		#endif
+	}
+	digitalWrite(LED_PIN, HIGH);
+}
+
 /**
  * @brief Máquina de estados para controle dos processos de verificação
  */
@@ -181,7 +203,6 @@ void control_run()
 			#ifdef LED_ON
 			if(led_div++ > 300)
 			{
-				//led_div = 0;
 				digitalWrite(LED_PIN, HIGH);
 			}
 			if(led_div++ > 600)
@@ -200,17 +221,17 @@ void control_run()
 			}
 			#endif
 
-			if(!digitalRead(IR_0))
+			if(digitalRead(IR_0))
 			{
 				#ifdef BUZZER_IR_ON
 				buzzer_ir_detected();
 				#endif
 				set_state_running();
+				process_delay();
 			}
 			break;
 
 		case RUNNING:
-			delay(TIME_DELAY);
 			set_state_check_volume();
 			break;
 
@@ -227,12 +248,12 @@ void control_run()
 
 		case CHECK_TEMPERATURE:
 			#ifdef TEMPERATURE_ON
-			if(!digitalRead(IR_1))
+			if(digitalRead(IR_1))
 			{
 				#ifdef BUZZER_IR_ON
 				buzzer_ir_detected();
 				#endif
-			   delay(TIME_DELAY);
+			   	process_delay();
 				// Checa temperatura
 				if(check_obj_temp())
 				{
@@ -250,12 +271,12 @@ void control_run()
 
 		case CHECK_COLOR:
 			#ifdef COLOR_ON
-			if(!digitalRead(IR_2))
+			if(digitalRead(IR_2))
 			{
 				#ifdef BUZZER_IR_ON
 				buzzer_ir_detected();
 				#endif
-				delay(TIME_DELAY);
+				process_delay();
 				// Confere os limites de cor
 				if(check_color_limits())
 					set_state_check_ocr();
@@ -269,16 +290,9 @@ void control_run()
 
 		case CHECK_OCR:
 			#ifdef OCR_ON
-			if(!digitalRead(IR_3))
-			{
-				#ifdef BUZZER_IR_ON
-				buzzer_ir_detected();
-				#endif
-				delay(TIME_DELAY);
-			}
+			check_ocr();
 			#else
 			process_ok();
-			set_state_idle();
 			#endif
 			break;
 
@@ -302,14 +316,11 @@ int check_volume()
 	{
 		debug_msg(printf("\n>> OK"));
 		return 1;
-		//debug_msg(printf("\n Volume: %.2f ml -> OK", control.volume));
 	}
 	else
 	{
-		return 0;
-		delay(1);
 		debug_msg(printf("\nValor fora do permitido!"));
-		debug_msg(printf("\n"));
+		return 0;
 	}
 }
 
@@ -319,16 +330,15 @@ int check_volume()
 int check_color_limits()
 {
 	#ifdef COLOR_ON
-
 	#ifdef DISPLAY_ON
 	display_color();
 	#endif
 
 	return 1;
 	#else
-	return 1;
 	debug_msg(printf("\n Sensor de cor desativado"));
 	debug_msg(printf("\n"));
+	return 1;
 	#endif
 }
 
@@ -348,15 +358,15 @@ int check_obj_temp()
 	debug_msg(printf("\n>> Medindo temperatura"));
 	if(control.obj_temp <= MAX_OBJ_TEMPERATURE)
 	{
-		return 1;
 		debug_msg(printf("\n"));
 		delay(1);
 		debug_msg(printf("Temp: %.2f ºC\n", control.obj_temp));
+		return 1;
 	}
 	else
 	{
-		return 0;
 		debug_msg(printf("Valor fora do permitido!\n"));
+		return 0;
 	}
 	#else
 	return 1;
@@ -364,35 +374,67 @@ int check_obj_temp()
 }
 
 /**
- * @brief Implementa a leitura OCR
+ * @brief Leitura OCR
  */
 void check_ocr()
 {
 	// Envia comando para salvar imagem
-
-	// Faz a leitura com o tesseract
-	system("tesseract rotulo.jpg output");
-	// Este processo é bem demorado...
-	//delay(30000);
-	// aqui buscamos a palavra suco de uva
-
+	#ifdef DISPLAY_ON
+	display_clear();
+	display_string("Leitura OCR");
+	display_set_line(LINE2);
+	display_string("Aguarde...");
+	#endif
+	system("fswebcam -r 640x480 --jpeg 100 -D 1 rotulo.jpg");
+	// Faz a leitura com o tesseract, este processo pode ser demorado...
+	system("tesseract rotulo.jpg rotulo");
+	char texto[500];
+    int passed;
+    FILE *fp;
+    fp = fopen("rotulo.txt", "r");
+    if(fp == NULL)
+    {
+        debug_msg(printf("\nNenhum arquivo de rotulo encontrado"));
+        process_failure();
+		#ifdef DISPLAY_ON
+		display_set_line(LINE2);
+		display_string("ERRO         ");
+		#endif
+    }
+    else
+    {
+        while(1)
+        {
+            if(feof(fp))
+                break;
+            fgets(texto,sizeof(texto), fp);
+            printf("%s", texto);
+            passed = strcmp(texto, "suco de uva") || strcmp(texto, "suco") ;
+        }
+		if(passed == 1)
+		{
+			process_ok();
+			debug_msg(printf("\nLeitura OCR finalizada com sucesso"));
+			#ifdef DISPLAY_ON
+			display_set_line(LINE2);
+			display_string("Rotulo OK      ");
+			#endif
+		}
+		else
+		{
+			process_failure();
+			debug_msg(printf("\nRotulo fora das especificacoes"));
+			#ifdef DISPLAY_ON
+			display_set_line(LINE2);
+			display_string("Falha no rotulo");
+			#endif
+		}
+    }
+	sleep(1);
+    fclose(fp);
 }
-void buzzeoid buzzer_alive()
-{
-	#ifdef BUZZER_SIGNAL_ON
-	#ifdef BUZZER_ON
-	if(buzzer_div++ > 2050)
-	{
-		digitalWrite(BUZZER_PIN, HIGH);
-	}
-	if(buzzer_div++ > 2060)
-	{
-		buzzer_div = 0;
-		digitalWrite(BUZZER_PIN, LOW);
-	}
-	#endif
-	#endif
-}r_process_passed()
+
+void buzzer_process_passed()
 {
 	#ifdef BUZZER_ON
 	digitalWrite(BUZZER_PIN, HIGH);
@@ -497,7 +539,7 @@ void calculate_volume()
 	float raio = 4.75; // Raio do cilindro inferior
 	float volume;
 	
-	// Calcula o volume da parte inferior
+	// Calcula o volume da parte inferior, considerado um cilindro.
 	volume = PI*raio*raio*altura;
 	
 	// Se o liquido estiver acima do cilindro, considera-se outra equação
@@ -507,10 +549,10 @@ void calculate_volume()
 		// Incluir aqui a outra equação
 	}*/
 
-	// Em função das variações de leitura do sensor ultrassonico, podemos ter um volume negativo
-	// quando a garrafa estiver vazia, então atualizamos apenas os valores positivos
 	if(volume > 0)
 		control.volume = volume;
+	else
+		control.volume = 0;
 }
 
 #ifdef COLOR_ON

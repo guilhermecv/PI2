@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <unistd.h> 
 #include <wiringPi.h> 
+#include <ctype.h>
+#include <string.h>
 #include "config.h" 
 
 #ifdef DISPLAY_ON

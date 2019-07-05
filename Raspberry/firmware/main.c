@@ -76,6 +76,9 @@ int main()
 	printf("\nAs operacoes de verificacao estao suspensas\nPressione <ctrl+c> para encerrar a execucao do programa\n");
 #else
 	load_file();
+	printf("Testando OCR...\n");
+	sleep(2);
+	check_ocr();
 	printf("\nSistema iniciado corretamente!");
 	sleep(2);
 	set_state_idle();
