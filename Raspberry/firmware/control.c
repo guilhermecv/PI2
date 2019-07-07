@@ -296,6 +296,7 @@ void control_run()
 			#endif
 			break;
 
+		
 		default:
 			break;
 	}
@@ -408,8 +409,8 @@ void check_ocr()
             if(feof(fp))
                 break;
             fgets(texto,sizeof(texto), fp);
-            printf("%s", texto);
-            passed = strcmp(texto, "suco de uva") || strcmp(texto, "suco") ;
+//            printf("%s", texto);
+            passed = strcmp(texto, "suco de uva") || strcmp(texto, "suco") || strcmp(texto, "SUCO");
         }
 		if(passed == 1)
 		{
@@ -430,7 +431,7 @@ void check_ocr()
 			#endif
 		}
     }
-	sleep(1);
+    sleep(1);
     fclose(fp);
 }
 

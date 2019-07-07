@@ -36,10 +36,17 @@
 #include "display.h"
 #else
 #pragma message "DISPLAY... OFF!"
-#endif
+#endif // DISPLAY_ON
 
 #ifdef OCR_ON
 #pragma message "OCR... ON!"
 #else
 #pragma message "OCR... OFF!"
 #endif // OCR_ON
+
+#ifdef BARCODE_ON
+#pragma message "BARCODE... ON!"
+#include "barcode.h"
+#else
+#pragma message "BARCODE... OFF!"
+#endif // BARCODE_ON

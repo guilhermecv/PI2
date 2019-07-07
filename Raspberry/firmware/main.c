@@ -66,19 +66,36 @@ int main()
 	printf("OCR........... OFF!\n");
 #endif // OCR_ON
 
+#ifdef BARCODE_ON
+	printf("Barcode....... ON!\n");
+	barcode_init();
+#else
+	printf("Barcode....... OFF!\n");
+#endif
+
 	pinMode(IR_0, INPUT);
 	pinMode(IR_1, INPUT);
 	pinMode(IR_2, INPUT);
 	pinMode(IR_3, INPUT);
 
 #ifdef TEST_MODE
+	#ifdef BARCODE_ON
+	printf("\nTestando codigo de barras\n");
+	sleep(2);
+	barcode_get_data();
+	printf("\nConferindo...\n");
+	printf("%d\n", barcode_check());
+	sleep(2);
+	#endif
+	#ifdef OCR_ON
+	printf("\nTestando OCR...\n");
+	sleep(2);
+	check_ocr();
+	#endif
 	printf("\nSistema iniciado em MODO TESTE!!");
 	printf("\nAs operacoes de verificacao estao suspensas\nPressione <ctrl+c> para encerrar a execucao do programa\n");
 #else
 	load_file();
-	printf("Testando OCR...\n");
-	sleep(2);
-	check_ocr();
 	printf("\nSistema iniciado corretamente!");
 	sleep(2);
 	set_state_idle();

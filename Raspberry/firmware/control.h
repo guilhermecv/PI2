@@ -71,6 +71,7 @@ int check_obj_temp();
 int check_color_limits();
 int check_volume();
 void check_ocr();
+void check_barcode();
 
 // TALVEZ VÁ PARA OUTRO ARQUIVO
 void ultrassonic_init();
