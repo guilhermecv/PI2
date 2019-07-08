@@ -14,7 +14,7 @@ OBJS = $(SRCS:.c=.o)
 EXEC = pi2
 
 all: clean $(EXEC)
-
+	@figlet IFSC - PI2
 $(EXEC): $(OBJS)
 	@$(CC) -o $@ $^ $(LDFLAGS)
 

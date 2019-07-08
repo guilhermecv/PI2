@@ -19,6 +19,7 @@ Jéssica Ramos Ribeiro
 * MLX 90615
 * JSN - SR04
 * TCRT 5000
+* LV1000 - CCD scanner
 * LCD 16x2
 
 

@@ -92,7 +92,7 @@ int main()
 	sleep(2);
 	check_ocr();
 	#endif
-	printf("\nSistema iniciado em MODO TESTE!!");
+	printf("\nSistema iniciado em MODO TESTE");
 	printf("\nAs operacoes de verificacao estao suspensas\nPressione <ctrl+c> para encerrar a execucao do programa\n");
 #else
 	load_file();

@@ -1,4 +1,5 @@
 /**
+ * IFSC Engenharia Eletrônica
  * Projeto Integrador 2 - 2019/1
  * Controle dos processos de verificação
  * Autores: Guilherme Camargo e Jessica Ribeiro
@@ -232,7 +233,32 @@ void control_run()
 			break;
 
 		case RUNNING:
+			#ifdef BARCODE_ON
+			#ifdef DISPLAY_ON
+			display_clear();
+			display_string("Cod. de barras");
+			#endif
+			barcode_get_data();
+			if(barcode_check())
+			{
+				#ifdef DISPLAY_ON
+				display_set_line(LINE2);
+				display_string("OK             ");
+				#endif
+				process_delay();	// Incluido para posicionar a garrafa corretamente
+				set_state_check_volume();
+			}
+			else
+			{
+				#ifdef DISPLAY_ON
+				display_set_line(LINE1);
+				display_string("sem cadastro  ");
+				#endif
+				process_failure();
+			}	
+			#else
 			set_state_check_volume();
+			#endif
 			break;
 
 		case CHECK_VOLUME:
@@ -304,6 +330,8 @@ void control_run()
 
 /**
  * @brief Confere se o volume calculado está dentro dos limites
+ * @return 1 Volume dentro dos limites
+ * @return 0 Volume fora do permitido
  */
 int check_volume()
 {
@@ -326,25 +354,9 @@ int check_volume()
 }
 
 /**
- * @brief Confere se as cores estão dentro dos limites definidos
- */
-int check_color_limits()
-{
-	#ifdef COLOR_ON
-	#ifdef DISPLAY_ON
-	display_color();
-	#endif
-
-	return 1;
-	#else
-	debug_msg(printf("\n Sensor de cor desativado"));
-	debug_msg(printf("\n"));
-	return 1;
-	#endif
-}
-
-/**
  * @brief Confere se a temperatura esta dentro dos limites definidos
+ * @return 1 Temperatura dentro dos limites 
+ * @return 0 Temperatura acima do permitido
  */
 int check_obj_temp()
 {
@@ -375,7 +387,23 @@ int check_obj_temp()
 }
 
 /**
- * @brief Leitura OCR
+ * @brief Confere se as cores estão dentro dos limites definidos
+ */
+int check_color_limits()
+{
+	#ifdef COLOR_ON
+	#ifdef DISPLAY_ON
+	display_color();
+	#endif
+
+	return 1;
+	#else
+	return 1;
+	#endif
+}
+
+/**
+ * @brief Implementa a leitura OCR, buscando algumas palavras no texto
  */
 void check_ocr()
 {
@@ -400,6 +428,7 @@ void check_ocr()
 		#ifdef DISPLAY_ON
 		display_set_line(LINE2);
 		display_string("ERRO         ");
+		sleep(1);
 		#endif
     }
     else
@@ -409,26 +438,26 @@ void check_ocr()
             if(feof(fp))
                 break;
             fgets(texto,sizeof(texto), fp);
-//            printf("%s", texto);
+            debug_msg(printf("%s", texto));
             passed = strcmp(texto, "suco de uva") || strcmp(texto, "suco") || strcmp(texto, "SUCO");
         }
 		if(passed == 1)
 		{
-			process_ok();
 			debug_msg(printf("\nLeitura OCR finalizada com sucesso"));
 			#ifdef DISPLAY_ON
 			display_set_line(LINE2);
 			display_string("Rotulo OK      ");
 			#endif
+			process_ok();
 		}
 		else
 		{
-			process_failure();
 			debug_msg(printf("\nRotulo fora das especificacoes"));
 			#ifdef DISPLAY_ON
 			display_set_line(LINE2);
 			display_string("Falha no rotulo");
 			#endif
+			process_failure();
 		}
     }
     sleep(1);
@@ -500,7 +529,9 @@ void buzzer_alive()
 	#endif
 }
 
-// AQUI COMEÇA O CONTROLE DOS SENSORES, TALVEZ VÁ PARA OUTRO ARQUIVO
+/**
+ * @brief Inicializa os pinos utilizados pelo sensor ultrassônico
+ */
 void ultrassonic_init()
 {
 	pinMode(ECHO_PIN, INPUT);
@@ -509,6 +540,7 @@ void ultrassonic_init()
 
 /**
  * @brief Retorna a distância medida pelo sensor ultrassônico
+ * @return Distância em cm
  */
 float get_distance()
 {
@@ -528,7 +560,7 @@ float get_distance()
 
 /**
  * @brief Calcula o volume da garrafa
- *		A lógica para escolha do raio não está implementada
+ * @return Volume em ml
  */
 void calculate_volume()
 {

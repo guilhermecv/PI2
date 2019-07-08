@@ -17,6 +17,11 @@
 #ifdef COLOR_ON
 #include "tcs3200.h"
 #endif
+
+#ifdef BARCODE_ON
+#include "barcode.h"
+#endif
+
 enum states
 {
 	IDLE,
