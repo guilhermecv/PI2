@@ -4,7 +4,7 @@ IFSC Engenharia Eletrônica
 
 --> [Artigo LPAE](https://github.com/LPAE/pi2_eng_19_1/blob/master/Guilherme_Camargo_e_Jessica_Ribeiro/previa_artigo.md)
 
-
+--> [Vídeo do projeto em funcionamento](https://www.youtube.com/watch?v=CO9-e8kDYCU)
 
 Autores:
 
