@@ -38,7 +38,7 @@ void display_send_string(char *s, uint8_t x, uint8_t y)
 /**
  * @brief exibe um resumo do sistema
  */
-void display_status(uint8_t *control)
+void display_status(int *control)
 {
 
 }

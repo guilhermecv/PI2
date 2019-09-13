@@ -72,7 +72,8 @@ int main()
     VERBOSE_MSG_INIT(usart_send_string("MLX... OFF!\n"));
     #endif /* MLX_ON */
 
-
+    sei();
+    
     while(1)
     {
         #ifdef WATCHDOG_ON

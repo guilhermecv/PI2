@@ -19,6 +19,8 @@ void machine_init()
 
   LED_PORT |= (1 << LED);
 
+  state_machine = IDLE;
+
 }
 
 void machine_run()
@@ -37,6 +39,7 @@ void machine_run()
             break;
 
             default:
+              for(;;);
             break;
         }
     }
@@ -67,10 +70,9 @@ void task_idle(void)
     if(display_idle_clk_div++ > DISPLAY_IDLE_CLK_DIV)
     {
       display_idle_clk_div = 0;
-      display_status();
+      // display_status(&control_flags);
     }
     #endif /* DISPLAY_ON */
-
 }
 
 void task_running(void)

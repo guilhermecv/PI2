@@ -9,7 +9,7 @@
 #define WATCHDOG_ON
 // #define MACHINE_ON
 // #define BUZZER_ON
-// #define LED_ON
+#define LED_ON
 #define DISPLAY_ON
 
 /*>>  VERBOSE */
@@ -33,7 +33,7 @@
 #ifdef LED_ON
 #define cpl_led()               cpl_bit(LED_PORT, LED);
 #define set_led()               set_bit(LED_PORT, LED);
-#define set_led()               clr_bit(LED_PORT, LED);
+#define clr_led()               clr_bit(LED_PORT, LED);
 #else
 #define cpl_led()
 #define set_led()

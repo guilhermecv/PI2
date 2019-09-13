@@ -20,7 +20,7 @@ void display_test(void);
 
 void display_send_string(char *s, uint8_t x, uint8_t y);
 
-void display_status(uint8_t *control)
+void display_status(int *control);
 
 
 #endif /* DISPLAY_ON */
