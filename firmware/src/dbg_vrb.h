@@ -9,7 +9,9 @@
 
 #ifndef DBG_VRB_H
 #define DBG_VRB_H
-    
+
+#include "config.h"
+
 #ifdef VERBOSE_ON
 #define VERBOSE_MSG(x) x
 #else
@@ -20,7 +22,7 @@
 #define VERBOSE_MSG_ERROR(x) x
 #else
 #define VERBOSE_MSG_ERROR(x)
-#endif 
+#endif
 
 #ifdef VERBOSE_ON_CAN_APP
 #define VERBOSE_MSG_CAN_APP(x) x
@@ -32,26 +34,26 @@
 #define VERBOSE_MSG_ADC(x) x
 #else
 #define VERBOSE_MSG_ADC(x)
-#endif 
- 
+#endif
+
 #ifdef VERBOSE_ON_PWM
 #define VERBOSE_MSG_PWM(x) x
 #else
 #define VERBOSE_MSG_PWM(x)
-#endif 
- 
+#endif
+
 #ifdef VERBOSE_ON_INIT
 #define VERBOSE_MSG_INIT(x) x
 #else
 #define VERBOSE_MSG_INIT(x)
-#endif 
+#endif
 
 #ifdef VERBOSE_ON_MACHINE
 #define VERBOSE_MSG_MACHINE(x) x
 #else
 #define VERBOSE_MSG_MACHINE(x)
-#endif 
- 
+#endif
+
 
 #ifdef DEBUG_ON
 #define DEBUG_MSG(x) x

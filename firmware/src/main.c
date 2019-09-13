@@ -10,13 +10,15 @@ int main()
 {
     #ifdef USART_ON
     usart_init(MYUBRR, 1, 1);
+
+    usart_send_string("PI2 - 2019/1\n\nUSART... OK!\n");
     #endif /* USART_ON */
 
     _delay_ms(200);
 
     #ifdef WATCHDOG_ON
     VERBOSE_MSG_INIT(usart_send_string("WATCHDOG... "));
-    // wdt_init(WDT0_4S);
+    wdt_enable(WDTO_4S);
     VERBOSE_MSG_INIT(usart_send_string("OK!\n"));
     #else
     VERBOSE_MSG_INIT(usart_send_string("WATCHDOG... OFF!\n"));
@@ -24,7 +26,7 @@ int main()
 
     #ifdef DISPLAY_ON
     VERBOSE_MSG_INIT(usart_send_string("DISPLAY... "));
-
+    display_init();
     VERBOSE_MSG_INIT(usart_send_string("OK!\n"));
     #else
     VERBOSE_MSG_INIT(usart_send_string("DISPLAY... OFF!\n"));

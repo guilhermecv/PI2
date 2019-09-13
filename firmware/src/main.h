@@ -18,3 +18,7 @@
 #ifdef USART_ON
 #include "usart.h"
 #endif /* USART_ON */
+
+#ifdef DISPLAY_ON
+#include "display.h"
+#endif /* DISPLAY_ON */

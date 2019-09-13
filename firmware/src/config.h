@@ -10,19 +10,30 @@
 // #define MACHINE_ON
 // #define BUZZER_ON
 // #define LED_ON
-// #define DISPLAY_ON
+#define DISPLAY_ON
 
-/*>> VERBOSE MESSAGE */
-#define VERBODE_ON_INIT
-#define VERBODE_ON_ERROR
+/*>>  VERBOSE */
+#define DEBUG_ON
+#define VERBOSE_ON
+#define VERBOSE_ON_INIT
+#define VERBOSE_ON_ERROR
+//#define VERBOSE_ON_MACHINE
 
+/*>> CONFIGURACOES DO DISPLAY */
+#define DISPLAY_IDLE_CLK_DIV    100
+
+
+/*>> I/Os */
+#define LED_PORT                PORTB
+#define LED_DDR                 DDRB
+#define LED                     PB5
 
 
 
 #ifdef LED_ON
-#define cpl_led()
-#define set_led()
-#define clr_led()
+#define cpl_led()               cpl_bit(LED_PORT, LED);
+#define set_led()               set_bit(LED_PORT, LED);
+#define set_led()               clr_bit(LED_PORT, LED);
 #else
 #define cpl_led()
 #define set_led()

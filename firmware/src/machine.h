@@ -15,6 +15,12 @@ typedef enum
     ERROR,
 }state_machine_t;
 
+typedef struct control_flags
+{
+
+}control_flags_t;
+
+
 uint8_t clk;
 uint8_t led_clk_div;
 uint8_t buzzer_clk_div;
@@ -28,5 +34,8 @@ void machine_run(void);
 // tasks
 void task_idle(void);
 void task_running(void);
+void task_error(void);
+
+ISR(TIMER2_COMPA_vect);
 
 #endif /* MACHINE_H */
