@@ -61,7 +61,7 @@ void set_state_idle()
 	led_div = display_div = 0;
 	#ifdef DISPLAY_ON
 	display_idle_message();
-	#endif	
+	#endif
 }
 
 void set_state_running()
@@ -186,7 +186,7 @@ void process_delay()
 		delay(100);
 		digitalWrite(LED_PIN, LOW);
 		#ifdef BUZZER_ON
-		//buzzer_bip();
+		buzzer_bip();
 		#endif
 	}
 	digitalWrite(LED_PIN, HIGH);
@@ -255,7 +255,7 @@ void control_run()
 				display_string("sem cadastro  ");
 				#endif
 				process_failure();
-			}	
+			}
 			#else
 			set_state_check_volume();
 			#endif
@@ -322,7 +322,7 @@ void control_run()
 			#endif
 			break;
 
-		
+
 		default:
 			break;
 	}
@@ -355,7 +355,7 @@ int check_volume()
 
 /**
  * @brief Confere se a temperatura esta dentro dos limites definidos
- * @return 1 Temperatura dentro dos limites 
+ * @return 1 Temperatura dentro dos limites
  * @return 0 Temperatura acima do permitido
  */
 int check_obj_temp()
@@ -571,10 +571,10 @@ void calculate_volume()
 	#endif
 	float raio = 4.75; // Raio do cilindro inferior
 	float volume;
-	
+
 	// Calcula o volume da parte inferior, considerado um cilindro.
 	volume = PI*raio*raio*altura;
-	
+
 	// Se o liquido estiver acima do cilindro, considera-se outra equação
 	/* if(altura >= )
 	{

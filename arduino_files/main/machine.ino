@@ -10,47 +10,51 @@ void machine_init(void)
               | (1 << CS22)                           // clock enabled, prescaller = 1024
               | (1 << CS21)
               | (1 << CS20);
-  OCR2A   =   80;                                // Valor para igualdade de comparacao A par  a frequencia de 150 Hz
+  OCR2A   =   250;                                // Valor para igualdade de comparacao A par  a frequencia de 150 Hz  (80 - original)
   TIMSK2 |=   (1 << OCIE2A);                      // Ativa a interrupcao na igualdade de comp  aração do TC2 com OCR2A
 
-  //  state_machine = INITIALIZING;
+  state_machine = INITIALIZING;
+
+  sensor0 = sensor1 = 0;
 }
 
 void set_state_idle()
 {
   state_machine = IDLE;
-//  VERBOSE_MSG_MACHINE(Serial.print("IDLE state\n"));
+  VERBOSE_MSG_MACHINE(Serial.print("IDLE state\n"));
 }
 
 void set_state_running()
 {
   state_machine = RUNNING;
-//  VERBOSE_MSG_MACHINE(Serial.print("RUNNING state\n"));
+  VERBOSE_MSG_MACHINE(Serial.print("RUNNING state\n"));
 }
 
 void set_state_error()
 {
   state_machine = ERROR;
+  VERBOSE_MSG_MACHINE(Serial.print("ERROR state\n"));
 }
 //############ TASKS ###############
 void task_idle()
 {
 #ifdef LED_ON
   static uint8_t led_clk_div;
-  static uint8_t error;
-
-  if(error++ >= 250)
-  {
-    set_state_error();
-  }
   if (led_clk_div++ > 50)
   {
     led_clk_div = 0;
     cpl_led();
   }
 #endif
+
+  // Sensor IR0 - Medição de volume
+  if (sensor0)
+  {
+    set_state_running();
+  }
 }
 
+void check_volume();
 
 void task_error()
 {
@@ -81,8 +85,9 @@ void machine_run()
         task_idle();
         break;
 
-      case RUNNING:
-//        task_running();
+      case STEP0:
+        check_volume();
+        //                task_running();
         break;
 
       case ERROR:

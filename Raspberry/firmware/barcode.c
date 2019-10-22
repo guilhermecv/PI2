@@ -8,7 +8,7 @@ void barcode_init()
     if((fd = serialOpen(DEVICE, BAUD)) < 0)
     {
         fprintf(stderr, "\nLeitor de codigo de barras\nerro ao abrir a serial: %s\n", strerror (errno));
-        exit(1);
+        exit(-1);
     }
     delay(2000);
 }
@@ -19,11 +19,22 @@ void barcode_init()
 void barcode_get_data()
 {
     int i=0;
-    
+    int timeout_clk_div;
+
     serialPutchar(fd,'b');
 
-    while(!serialDataAvail(fd));
+    timeout_clk_div = 0;
 
+    while(!serialDataAvail(fd))
+    {
+        if(timeout_clk_div++ >= BARCODE_TIMEOUT_VALUE)
+        {
+            debug_msg(printf("\n>> barcode_check timeout\n"));
+            break;
+        }
+    }
+
+    timeout_clk_div = 0;
     while (1)
     {
         if(serialDataAvail(fd))
@@ -34,6 +45,13 @@ void barcode_get_data()
         }
         if(i==MAX)
             break;
+
+        delay(5);
+        if(timeout_clk_div++ >= BARCODE_TIMEOUT_VALUE)
+        {
+            debug_msg(printf("\n>> barcode_check timeout\n"));
+            break;
+        }
     }
 }
 
