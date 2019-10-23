@@ -185,7 +185,7 @@ void process_delay()
 		digitalWrite(LED_PIN, HIGH);
 		delay(100);
 		digitalWrite(LED_PIN, LOW);
-		#ifdef BUZZER_ON
+		#ifdef BUZZER_ON_PROCESS_DELAY
 		buzzer_bip();
 		#endif
 	}
@@ -222,7 +222,7 @@ void control_run()
 			}
 			#endif
 
-			if(digitalRead(IR_0))
+			if(!digitalRead(IR_0))
 			{
 				#ifdef BUZZER_IR_ON
 				buzzer_ir_detected();
@@ -274,8 +274,10 @@ void control_run()
 
 		case CHECK_TEMPERATURE:
 			#ifdef TEMPERATURE_ON
-			if(digitalRead(IR_1))
+			// if(digitalRead(IR_1))
+			if(process_clk_div++ > 400)
 			{
+				process_clk_div = 0;
 				#ifdef BUZZER_IR_ON
 				buzzer_ir_detected();
 				#endif
@@ -297,8 +299,10 @@ void control_run()
 
 		case CHECK_COLOR:
 			#ifdef COLOR_ON
-			if(digitalRead(IR_2))
+			// if(digitalRead(IR_2))
+			if(process_clk_div++ > 400)
 			{
+				process_clk_div = 0;
 				#ifdef BUZZER_IR_ON
 				buzzer_ir_detected();
 				#endif

@@ -13,7 +13,7 @@
 */
 #include "display.h"
 
-void lcd_init()   
+void lcd_init()
 {
   display_backlight_on();
   if (wiringPiSetup () == -1) exit (1);
@@ -100,7 +100,7 @@ void display_idle_message()
 	display_set_line(LINE1);
 	display_string("PI 2 - 2019/1    ");
 	display_set_line(LINE2);
-	display_string("Em espera...    ");
+	display_string("Em espera...     ");
 }
 
 void display_load_message()
@@ -108,7 +108,7 @@ void display_load_message()
   display_set_line(LINE1);
 	display_string("PI 2 - 2019/1    ");
 	display_set_line(LINE2);
-	display_string("Buscando log... ");
+	display_string("Buscando log...  ");
   delay(1000);
 }
 
@@ -155,7 +155,7 @@ void display_update_status(int t, int p, int r)
   display_int(r);
 }
 
-void lcd_byte(int bits, int mode)   
+void lcd_byte(int bits, int mode)
 {
   //Send byte to data pins
   // bits = the data
@@ -178,7 +178,7 @@ void lcd_byte(int bits, int mode)
 void lcd_toggle_enable(int bits)   {
   // Toggle enable pin on LCD display
   // Valor original do delay 500us
-  delayMicroseconds(100); 
+  delayMicroseconds(100);
   wiringPiI2CReadReg8(fd, (bits | ENABLE));
   delayMicroseconds(100);
   wiringPiI2CReadReg8(fd, (bits & ~ENABLE));

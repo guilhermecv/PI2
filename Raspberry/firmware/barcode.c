@@ -8,7 +8,11 @@ void barcode_init()
     if((fd = serialOpen(DEVICE, BAUD)) < 0)
     {
         fprintf(stderr, "\nLeitor de codigo de barras\nerro ao abrir a serial: %s\n", strerror (errno));
-        exit(-1);
+        // exit(-1);
+        #ifdef DISPLAY_ON
+        display_clear();
+        display_string("Falha na serial");
+        process_failure();
     }
     delay(2000);
 }

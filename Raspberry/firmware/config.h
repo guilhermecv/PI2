@@ -1,41 +1,42 @@
 /**
  * Projeto Integrador 2 - 2019/1
  * Configurações gerais do projeto
- */ 
+ */
 
 //====================================
 //======= ATIVAÇÃO DOS MÓDULOS =======
 //====================================
 #define LED_ON
 #define DISPLAY_ON
-//#define TEMPERATURE_ON
-//#define ULTRASSONIC_ON
-//#define COLOR_ON
+#define TEMPERATURE_ON
+#define ULTRASSONIC_ON
+#define COLOR_ON
 #define OCR_ON
-#define BARCODE_ON
+// #define BARCODE_ON
 
 
 #define FILENAME                "log.csv"   // Nome do arquivo de log
 #define DEBUG_ON						    // Habilita o envio de mensagens no console
 #define TEST_MODE						    // Habilitando este modo, as outras operações não serão executadas
-#define OFFSET_DISTANCE_VALUE	43		    // Distância medida pelo sensor com a garrafa vazia
-#define DELAY					5
+#define OFFSET_DISTANCE_VALUE	  43		    // Distância medida pelo sensor com a garrafa vazia
+#define DELAY					          5
 
 // Configurações do Buzzer
 #define BUZZER_ON
 //#define BUZZER_SIGNAL_ON					// Bips regulares se tudo estiver OK
 #define BUZZER_IR_ON						// Bips quando algum sensor for acionado
+#defien BUZZER_ON_PROCESS_DELAY
 
 //=====================================
 //======== LIMITES DE VALORES =========
 //=====================================
 //>> VOLUME
-#define MIN_VOLUME_VALUE		900	    
-#define MAX_VOLUME_VALUE        1700      
-//>> TEMPERATURA  
-#define MAX_OBJ_TEMPERATURE     30         
+#define MIN_VOLUME_VALUE		900
+#define MAX_VOLUME_VALUE        1700
+//>> TEMPERATURA
+#define MAX_OBJ_TEMPERATURE     30
 #define MAX_AMB_TEMPERATURE     30
-//>> COR 
+//>> COR
 /*
 #define MAX_RED_VALUE
 #define MAX_GREEN_VALUE

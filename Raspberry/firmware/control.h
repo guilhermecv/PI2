@@ -1,10 +1,14 @@
+#ifndef CONTROL_H
+#define CONTROL_H
+
+
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h> 
-#include <wiringPi.h> 
+#include <unistd.h>
+#include <wiringPi.h>
 #include <ctype.h>
 #include <string.h>
-#include "config.h" 
+#include "config.h"
 
 #ifdef DISPLAY_ON
 #include "display.h"
@@ -91,3 +95,6 @@ void get_color();
 #else
 #define debug_msg(x)
 #endif
+
+
+#endif /* CONTROL_H */

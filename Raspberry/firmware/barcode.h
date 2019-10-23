@@ -6,6 +6,12 @@
 #include <wiringSerial.h>
 #include "config.h"
 
+#ifdef DISPLAY_ON
+#include "display.h"
+#endif
+
+#include "control.h"
+
 #define DEVICE  "/dev/ttyACM0"
 #define BAUD    9600
 #define MAX     13
