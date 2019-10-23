@@ -17,15 +17,15 @@
 
 #define FILENAME                "log.csv"   // Nome do arquivo de log
 #define DEBUG_ON						    // Habilita o envio de mensagens no console
-#define TEST_MODE						    // Habilitando este modo, as outras operações não serão executadas
+//#define TEST_MODE						    // Habilitando este modo, as outras operações não serão executadas
 #define OFFSET_DISTANCE_VALUE	  43		    // Distância medida pelo sensor com a garrafa vazia
 #define DELAY					          5
-
+#define BARCODE_TIMEOUT_VALUE	 2000
 // Configurações do Buzzer
 #define BUZZER_ON
 //#define BUZZER_SIGNAL_ON					// Bips regulares se tudo estiver OK
 #define BUZZER_IR_ON						// Bips quando algum sensor for acionado
-#defien BUZZER_ON_PROCESS_DELAY
+#define BUZZER_ON_PROCESS_DELAY
 
 //=====================================
 //======== LIMITES DE VALORES =========

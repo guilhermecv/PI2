@@ -56,6 +56,7 @@ void save_file()
 
 void set_state_idle()
 {
+	process_clk_div = 0;
 	machine_state = IDLE,
 	debug_msg(printf("\n>> Em espera\n"));
 	led_div = display_div = 0;
@@ -79,21 +80,25 @@ void set_state_running()
 
 void set_state_check_volume()
 {
+	process_clk_div = 0;
 	machine_state = CHECK_VOLUME;
 }
 
 void set_state_check_temperature()
 {
+	process_clk_div = 0;
 	machine_state = CHECK_TEMPERATURE;
 }
 
 void set_state_check_color()
 {
+	process_clk_div = 0;
 	machine_state = CHECK_COLOR;
 }
 
 void set_state_check_ocr()
 {
+	process_clk_div = 0;
 	machine_state = CHECK_OCR;
 	debug_msg(printf("\n>> Iniciando leitura OCR\n"));
 }

@@ -52,7 +52,7 @@ int machine_state;
 int display_div;
 int led_div;
 int buzzer_div;
-
+int process_clk_div;
 // Manipulação de arquivos
 void load_file();
 void save_file();

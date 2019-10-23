@@ -12,8 +12,9 @@ void barcode_init()
         #ifdef DISPLAY_ON
         display_clear();
         display_string("Falha na serial");
-        process_failure();
-    }
+//        process_failure();
+    	#endif
+	}
     delay(2000);
 }
 
